@@ -272,12 +272,12 @@ function downloadIllusts(illusts, dldir, configThread) {
 
 						for (let i = 0; i < 10 && !Fs.existsSync(dlfile); i++) await sleep(200);////
 
-						await sleep(1500);
+						await sleep(500);
 						dlFileSize = Fs.statSync(dlfile).size;
 
 
 
-						if (dlFileSize == fileSize)//根据文件大小判断下载是否成功
+						if (!fileSize || dlFileSize == fileSize)//根据文件大小判断下载是否成功
 						{
 							//Tools.clearProgress(processDisplay);
 
