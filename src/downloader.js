@@ -217,7 +217,6 @@ function downloadIllusts(illusts, dldir, configThread) {
 	//开始多线程下载
 	let errorThread = 0;
 	let pause = false;
-	let hangup = 5 * 60 * 1000;
 	let errorTimeout = null;
 	//单个线程
 	function singleThread(threadID) {
@@ -258,7 +257,9 @@ function downloadIllusts(illusts, dldir, configThread) {
 					}
 					if (pause) {
 						times = 1;
-						await sleep(hangup);
+						let follows = [];
+						follows = require(downJson);
+						follows.shift();
 						pause = false;
 					}
 					//失败重试				
