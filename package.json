@@ -1,0 +1,45 @@
+{
+  "name": "pxrepo",
+  "version": "2.0.2",
+  "description": "此项目的源码来自GitHub上的开源项目：https://github.com/Tsuk1ko/pxder",
+  "main": "index.js",
+  "dependencies": {
+    "appdata-path": "^1.0.0",
+    "axios": "^0.20.2",
+    "colors": "^1.4.0",
+    "commander": "^5.1.0",
+    "compare-versions": "^3.6.0",
+    "fs-extra": "^9.0.1",
+    "https-proxy-agent": "^5.0.0",
+    "is-online": "^8.2.1",
+    "latest-version": "^5.1.0",
+    "node-fetch": "^2.6.0",
+    "node-stream-zip": "^1.9.1",
+    "pixiv-api-client": "^0.22.0",
+    "readline-sync": "^1.4.10",
+    "shelljs": "^0.8.4",
+    "socks-proxy-agent": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/readline-sync": "^1.4.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "pxrepo": "bin/pxrepo"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EIGHTfs/pxrepo.git"
+  },
+  "keywords": [
+    "pixiv"
+  ],
+  "author": "EIGHTfs",
+  "license": "GPL-3.0-or-later",
+  "homepage": "https://github.com/EIGHTfs/pxrepo",
+  "bugs": {
+    "url": "https://github.com/EIGHTfs/pxrepo/issues"
+  }
+}
