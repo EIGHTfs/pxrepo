@@ -34,13 +34,13 @@ yum install nodejs -y
 ### 安装
 
 ```bash
-npm i -g pixivrepositories
+npm i -g pxrepo
 ```
 
 ### 卸载
 
 ```bash
-npm uninstall -g pixivrepositories
+npm uninstall -g pxrepo
 ```
 
 ## 配置
