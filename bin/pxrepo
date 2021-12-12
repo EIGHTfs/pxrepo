@@ -110,11 +110,11 @@ handleArgv()
 		global.cf = program.cf;
 		if (program.follow) {
 			await pixiv.getAllMyFollow(false, program.aptend);
-			await pixiv.downloadUpdate(program.aptend);
+			
 		}
 		if (program.followPrivate) {
 			await pixiv.getAllMyFollow(true, program.aptend);
-			await pixiv.downloadUpdate(program.aptend);
+			
 		}
 
 ///////////////////////

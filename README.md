@@ -34,13 +34,13 @@ yum install nodejs -y
 ### 安装
 
 ```bash
-npm i -g pxrepo
+npm i -g pixivrepositories
 ```
 
 ### 卸载
 
 ```bash
-npm uninstall -g pxrepo
+npm uninstall -g pixivrepositories
 ```
 
 ## 配置
@@ -130,15 +130,15 @@ pxrepo --setting
 
 `pxrepo -f` `pxrepo -F`
 
-#### 创建`download.json`，获取关注时每获取一批（30 个)就写入一次，而且若已存在文件也可以提供附加参数`--aptend`继续获取新的关注列表追加`download.json`,否则会重新获取并覆盖
-#### 获取到画师ID的同时创建 `(id) `文件夹
+#### 创建`download.json`，获取关注时每获取一批（30 个)就写入一次，而且若已存在文件也可以提供附加参数`--aptend`继续获取新的关注列表追加`download.json`
+
 `pxder -U`
 
 #### 读取所有下载的画师进行更新
 
 `pxrepo -U`
 
-#### 通过画师文件夹`（id）画师名` 读取所有下载的画师的id,写入到`download.json`然后进行更新
+#### 读取所有下载的画师,写入到`download.json`然后进行更新
 
 `pxder --setting`
 
