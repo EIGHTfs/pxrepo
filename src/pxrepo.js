@@ -10,13 +10,10 @@ const readline = require('readline-sync');
 const { getProxyAgent, getSysProxy } = require('./proxy');
 const pxrepodir = Path.resolve(__dirname, '..');
 const configFileDir = Path.join(pxrepodir, 'config');
-
 const configFile = Path.join(configFileDir, 'config.json');
 const downJson = Path.join(configFileDir, 'download.json');
-const nextJson = Path.join(configFileDir, 'next.json');
 const historyJson = Path.join(configFileDir, 'history.json');
 const blacklistJson = Path.join(configFileDir, 'blacklist.json');
-
 let blacklist = [];
 let __config;
 const { Agent } = require('https');
@@ -217,10 +214,7 @@ class PixivFunc {
 	 */
 	async getMyFollow(isPrivate = false) {
 		let follows = [];
-		
 		let next = this.followNextUrl;
-		Fs.writeFileSync(nextJson, JSON.stringify(next));//写入下一个关注信息到nextJson
-		next = require(nextJson);
 		let dir_Illustrator;
 
 		if (!Fs.existsSync(__config.download.path)) Fs.mkdirSync(__config.download.path);
@@ -231,7 +225,6 @@ class PixivFunc {
 		//加入画师信息
 		async function addToFollows(data) {
 			next = data.next_url;
-			Fs.writeFileSync(nextJson, JSON.stringify(next));//写入下一个关注信息到nextJson
 			var offset = '';
 			for (const preview of data.user_previews) {
 
@@ -533,7 +526,7 @@ class PixivFunc {
 				;
 
 
-			Fs.writeFileSync(downJson, JSON.stringify(follows));//写入关注信息到downJson
+			Fs.writeFileSync(downJson, JSON.stringify(follows));
 		});
 		Fs.unlinkSync(downJson);
 
