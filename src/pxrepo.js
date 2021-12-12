@@ -243,9 +243,9 @@ class PixivFunc {
 
 
 					dir_Illustrator = Path.join(__config.download.path, '(' + preview.user.id + ')' + iName);
-
-					if (!Fs.existsSync(dir_Illustrator))
-						Fs.mkdirSync(dir_Illustrator);
+					if (Tools.CheckExist(blacklist, preview.user.id)) 
+						if (!Fs.existsSync(dir_Illustrator))
+							Fs.mkdirSync(dir_Illustrator);
 
 					follows.push(
 						{
