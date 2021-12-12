@@ -130,7 +130,7 @@ pxrepo --setting
 
 `pxrepo -f` `pxrepo -F`
 
-#### 创建`download.json`，获取关注时每获取一批（30 个)就写入一次，而且若已存在文件也可以提供附加参数`--aptend`继续获取新的关注列表追加`download.json`
+#### 创建`download.json`，获取关注时每获取一批（30 个)就写入一次，同时直接在下载目录下创建画师对应文件夹，而且若已存在文件也可以提供附加参数`--aptend`继续获取新的关注列表追加到`download.json`。并且仅获取，完成后不会进行下载
 
 `pxder -U`
 
@@ -138,7 +138,7 @@ pxrepo --setting
 
 `pxrepo -U`
 
-#### 读取所有下载的画师,写入到`download.json`然后进行更新
+#### `download.json`不存在，读取所有下载的画师(通过画师对应的文件夹),写入到`download.json`然后进行更新，`download.json`存在即为下载功能
 
 `pxder --setting`
 
@@ -179,33 +179,24 @@ pxrepo --setting
 '-p, --pid <pid(s)>'
 ```
 
-### 指定画师 UD 下载该画师未下载的一次不超过 5000 张画作
+### 指定画师 UID 下载该画师未下载的一次不超过 5000 张画作
 
 ```bash
 '-u, --uid <uid(s)>'
 ```
 
-### 获取公开关注列表中最新关注的 5000 名画师，获取其画作下载
+### PIXIV API限制一次性获取画师不能超过5000.获取和下载分开
 
 #### 可配合`--aptend`对`download.json`进行增量更新，默认为新获取数据覆盖`download.json`
 
 `download.json`即为获取的画师信息列表，是 pxrepo 的下载列表
 
 ```bash
-'-f, --follow'
+'-U'
 ```
 
-### 获取私密关注列表中最新关注的 5000 名画师，获取其画作下载
 
-#### 可配合`--aptend`对`download.json`进行增量更新，默认为新获取数据覆盖`download.json`
-
-`download.json`即为获取的画师信息列表，是 pxrepo 的下载列表
-
-```bash
-'-F, --follow-private'
-```
-
-### \*取消当前第一个画师下载任务，一般用于个别画师出现的无法进行下载时跳过
+### \*取消当前第一个画师下载任务，一般用于个别画师出现无法进行下载时进行跳过
 
 ```bash
 '-C, --shift'
