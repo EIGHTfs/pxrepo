@@ -218,8 +218,9 @@ class PixivFunc {
 	async getMyFollow(isPrivate = false) {
 		let follows = [];
 		
-		//let next = this.followNextUrl;
-		let next = require(nextJson);
+		let next = this.followNextUrl;
+		Fs.writeFileSync(nextJson, JSON.stringify(next));//写入下一个关注信息到nextJson
+		next = require(nextJson);
 		let dir_Illustrator;
 
 		if (!Fs.existsSync(__config.download.path)) Fs.mkdirSync(__config.download.path);
