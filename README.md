@@ -4,7 +4,7 @@
 
 ## 声明
 
-### \*此项目的源码来自 GitHub 上的开源项目:[Tsuk1ko/pxder](https://github.com/Tsuk1ko/pxder)，为了优化个人体验，基于个人体验时的想法进行了修改
+### \*此项目的源码来自 GitHub 上的开源项目:[Tsuk1ko/pxder](https://github.com/Tsuk1ko/pxder)，为了针对个人体验时的想法进行了修改（因为我没学过nodejs，所以改得贼烂，依葫芦画瓢试出来的，我也很羞愧）
 
 ### \*此项目开源
 
