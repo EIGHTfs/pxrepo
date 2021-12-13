@@ -12,36 +12,13 @@
 
 首先你需要先[下载](https://nodejs.org/dist/v13.12.0/node-v13.12.0-x64.msi) 安装 [Nodejs](https://nodejs.org/zh-cn/)
 
-## Linux
-```bash
-### Ubuntu
-
-curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
-sudo apt-get install -y nodejs
-
-### Debian
-
-curl -sL https://deb.nodesource.com/setup_12.x | bash -
-apt-get install -y nodejs
-
-### Centos
-
-curl -sL https://rpm.nodesource.com/setup_12.x | bash -
-yum install nodejs -y
-```
-## 安装/更新/卸载
 
 ### 安装
 
 ```bash
-npm i -g pixivrepositories
+npm install
 ```
 
-### 卸载
-
-```bash
-npm uninstall -g pixivrepositories
-```
 
 ## 配置
 
