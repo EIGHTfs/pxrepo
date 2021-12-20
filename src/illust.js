@@ -55,6 +55,7 @@ class Illust {
 					illusts.push(new Illust(...ugoiraParams, `(${id})${fileName}@${uDelay}ms.zip`));
 				} catch (error) {
 					console.error("\nRate limit error");
+					illusts.push(new Illust(...ugoiraParams, `(${id})${fileName}.zip`));
 					return illusts;
 				}
 			} else illusts.push(new Illust(...ugoiraParams, `(${id})${fileName}.zip`));
