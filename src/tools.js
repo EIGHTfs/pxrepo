@@ -140,7 +140,11 @@ function readJsonSafely(path, defaultValue) {
 	return defaultValue;
 }
 
-
+function sleep(ms) {
+	return new Promise(resolve => {
+		setTimeout(resolve, ms);
+	});
+}
 
 
 
@@ -152,7 +156,7 @@ module.exports = {
 	mkdirsSync,
 	readJsonSafely,
 	CheckExist,
-
+	sleep,
 
 };
 

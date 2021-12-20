@@ -66,7 +66,7 @@ async function downloadByIllustrators(illustrators, callback) {
 		//下载
 		await downloadIllusts(info.illusts, Path.join(config.path, info.dir), config.thread);
 		////防止突破30次/min的限制
-		//await sleep(2000);
+		//await Tools.sleep(2000);
 		//回调
 		if (typeof (callback) == 'function') callback(i);
 
@@ -84,11 +84,7 @@ async function downloadByIllustrators(illustrators, callback) {
  * @returns
  */
 async function getDownloadListByIllustrator(illustrator) {
-	function sleep(ms) {
-		return new Promise(resolve => {
-			setTimeout(resolve, ms);
-		});
-	}
+	
 
 	let illusts = [];
 
@@ -115,7 +111,7 @@ async function getDownloadListByIllustrator(illustrator) {
 		});
 	}
 	isonline();
-	await sleep(1000);
+	await Tools.sleep(1000);
 
 	//最新画作检查
 	let exampleIllusts = illustrator.exampleIllusts;
@@ -151,7 +147,7 @@ async function getDownloadListByIllustrator(illustrator) {
 		if ((illusts.length % 1000) >= 500 && (illusts.length % 1000) <= 600) {
 			//console.log('\n防止Rate Limit,暂停15秒');
 			//防止突破30次/min的限制
-			await sleep(15000);
+			await Tools.sleep(15000);
 		}
 
 	} while (illustrator.hasNext('illust') && cnt > 0 && illusts.length < 4500);
@@ -258,7 +254,7 @@ function downloadIllusts(illusts, dldir, configThread) {
 					}
 					if (pause) {
 						times = 1;
-						await sleep(hangup);
+						await Tools.sleep(hangup);
 						pause = false;
 					}
 					//失败重试				
@@ -270,9 +266,9 @@ function downloadIllusts(illusts, dldir, configThread) {
 
 
 
-						for (let i = 0; i < 10 && !Fs.existsSync(dlfile); i++) await sleep(200);////
+						for (let i = 0; i < 10 && !Fs.existsSync(dlfile); i++) await Tools.sleep(200);////
 
-						await sleep(500);
+						await Tools.sleep(500);
 						dlFileSize = Fs.statSync(dlfile).size;
 
 
@@ -394,15 +390,11 @@ async function downloadByIllusts(illustJSON) {
 	}
 	await downloadIllusts(illusts, Path.join(config.path, 'PID'), config.thread);
 	////防止突破30次/min的限制
-	//await sleep(2000);
+	//await Tools.sleep(2000);
 }
 
 
-function sleep(ms) {
-	return new Promise(resolve => {
-		setTimeout(resolve, ms);
-	});
-}
+
 
 module.exports = {
 	setConfig,

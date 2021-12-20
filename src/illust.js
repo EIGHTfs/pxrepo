@@ -54,8 +54,8 @@ class Illust {
 					const uDelay = await pixiv.ugoiraMetaData(id).then(ret => ret.ugoira_metadata.frames[0].delay);
 					illusts.push(new Illust(...ugoiraParams, `(${id})${fileName}@${uDelay}ms.zip`));
 				} catch (error) {
-					console.error("\nFailed to get ugoira meta data . If you get a rate limit error, please use ", '--no-ugoira-meta'.yellow, 'argument to avoid it.', error, '\n');
-					illusts.push(new Illust(...ugoiraParams, `(${id})${fileName}.zip`));
+					console.error("\nRate limit error");
+					return illusts;
 				}
 			} else illusts.push(new Illust(...ugoiraParams, `(${id})${fileName}.zip`));
 		} else {
