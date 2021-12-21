@@ -19,7 +19,7 @@ let complete;
 let config;
 let Network = 0;
 const tempdir = Path.join(pxrepodir, 'temp');
-let blacklist = [];
+let blacklist = require(blacklistJson);
 
 let httpsAgent = false;
 
@@ -54,8 +54,12 @@ async function downloadByIllustrators(illustrators, callback) {
 		console.log("\nCollecting illusts of " + (parseInt(i) + 1).toString().green + "/" + illustrators.length + " uid ".gray + illustrator.id.toString().cyan + " " + illustrator.name.yellow);
 
 		illustrator_id = illustrator.id;
-		let historys = [];
-		historys = require(historyJson);
+		if (Tools.CheckExist(blacklist, illustrator_id)) {
+			console.log('黑名单：\t (' + illustrator_id + ')');
+			continue;
+		}
+		let historys = require(historyJson)
+	
 		Tools.CheckExist(historys, illustrator.id.toString(), historyJson, illustrator.name)
 		complete=Path.join(tempdir, illustrator.id.toString());
 		console.log(complete);

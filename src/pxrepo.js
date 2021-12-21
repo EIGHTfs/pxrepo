@@ -345,7 +345,7 @@ class PixivFunc {
 		const uidArray = Array.isArray(uids) ? uids : [uids];
 		for (const uid of uidArray) {
 			//判断作品是否在黑名单
-			blacklist = require(blacklistJson);
+			blacklist = require(blacklistJson)
 			if (Tools.CheckExist(blacklist, uid)) {
 				console.log('黑名单：\t (' + uid + ')');
 				continue;
