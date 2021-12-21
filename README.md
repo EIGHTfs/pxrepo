@@ -37,69 +37,6 @@ pxrepo --login
 pxrepo --logout
 ```
 
-### 设置
-
-进入 Pxrepo 的设置界面
-
-```bash
-pxrepo --setting
-```
-
-有五项设置，按下数字键选择一项进行设置，然后按照要求输入之后回车即可
-
-```bash
-[1] Download path     # 下载目录，必须设置
-[2] Download thread   # 下载线程数
-[3] Auto rename       # 自动重命名（文件夹）
-[4] Proxy             # 使用代理
-```
-
-- **下载目录**  
-  请注意相对路径与绝对路径的区别，不过不用担心，输入完路径后会显示绝对路径以方便你检查  
-  目录无需手动建立，下载图片的时候会自动建立
-- **下载线程数**  
-  即同时下载的图片数，默认为`32`，最小为`1`，最大为`90`  
-  下载图片时最左侧的一列实际上就是线程编号
-- **自动重命名**  
-  默认开启,开启了以后，例如这个画师原来叫`abc`，今天你再次去下载（更新）他的画作，但是他改名叫`def`了，那么程序会自动帮你重命名画师文件夹
-- **使用代理**  
-  支持使用 HTTP 或 SOCKS 代理，即可以使用小飞机  
-  输入格式为`<协议>://[用户名:密码@]<IP>:<端口>`，例如：
-  - `http://user:passwd@127.0.0.1:1080`
-  - `socks://127.0.0.1:1080`
-
-禁止使用代理，请输入`disable`
-
-## 功能
-
-    .option('--login', 'login Pixiv')
-    .option('--logout', 'logout Pixiv')
-
-    .option('--setting', 'open options menu')
-    .option('')
-    .option('-p, --pid <pid(s)>', 'download illusts by PID, multiple PIDs separated by commas (,)')
-    .option('-u, --uid <uid(s)>', 'download / update illusts by UID, multiple UIDs separated by commas (,)')
-    .option('')
-    .option('-f, --follow', 'download / update illusts from your public follows')
-    .option('-F, --follow-private', 'download / update illusts from your private follows')
-    .option('-C, --shift', 'follows.shift()')
-
-    .option('-b, --bookmark', 'download / update illusts from your public bookmark')
-    .option('-B, --bookmark-private', 'download / update illusts from your private bookmark')
-    .option('')
-    .option('-U, --update', "update illustrators' illusts in your download path")
-    	.option('    --aptend', 'add illustrators in downloadJson')
-    	.option('    --force', 'ignore blacklist')
-    .option('    --repair', 'download illusts from your download history')
-
-    .option('-D, --delete', 'delete illustrators\' illusts in your download temp path')
-
-    .option('    --no-cf', 'download illusts from i.pximg.net instead of i-cf.pximg.net')
-
-    .option('    --debug', 'output all error messages while running')
-
-    .option('-l, --blacklist <uid(s)>', 'Add the illusts to the blacklist')
-
 ## 对 pxder 的修改
 
 `pxder -f` `pxder -F`
@@ -130,12 +67,7 @@ pxrepo --setting
 
 #### 缓存目录和程序目录位于同一个文件夹下，下载会在缓存目录下再创建格式为"(" + id + ")"的文件夹。不再是直接都放在整个缓存目录，运行时不会删掉缓存目录 (`pxrepo -D`可以删除缓存目录里面所有文件)
 
-#### 增加黑名单功能，原理：手动`pxrepo -l`添加画师 ID 拉入“黑名单”，每次下载前都会检查欲下载的画师的 ID 是否存在于`blacklist.json`，存在就跳过。默认值`[{"id":11}]`
-
-#### 我觉得必要的时候暂停 15s，防止 Rate Limit 出现。
-
-#### 可以`pxrepo -C`手动跳过当前`download.json`的第一个画师
-
+#### 增加"黑名单"功能手动`pxrepo -l`添加画师 ID 拉入"黑名单"，每次下载前都会检查欲下载的画师的 ID 是否存在于`blacklist.json`，存在就跳过。默认值`[{"id":11}]`,之所以搞这个是因为有些画师号没了;已经下载了保留了自己要的插图，不想再下载他其他的插图了;或者是下面这种情况，基本也可以"拉黑"了，所谓的"拉黑"只是每次都跳过下载，并不是真的pixiv拉黑
 ```bash
 {
   error: {
@@ -146,6 +78,12 @@ pxrepo --setting
   }
 }
 ```
+
+
+#### 为防止 Rate Limit 出现。有时会自动暂停 15s
+
+#### 可以`pxrepo -C`手动跳过当前`download.json`的第一个画师
+
 
 ## 参数说明
 
