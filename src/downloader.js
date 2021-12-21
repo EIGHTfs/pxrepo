@@ -233,7 +233,7 @@ function downloadIllusts(illusts, dldir, configThread) {
 					headers: {
 						referer: pixivRefer,
 					},
-					timeout: 1000 * 1,
+					timeout: 1000 * 5,
 				};
 				//代理
 				if (httpsAgent) options.httpsAgent = httpsAgent;
