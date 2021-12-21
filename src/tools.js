@@ -157,6 +157,5 @@ module.exports = {
 	readJsonSafely,
 	CheckExist,
 	sleep,
-
 };
 

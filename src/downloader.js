@@ -311,7 +311,15 @@ function downloadIllusts(illusts, dldir, configThread) {
 		}));
 
 	}
-	return Promise.all(threads);
+	//return Promise.all(threads)
+	function handlePromise(promiseList) {
+		return promiseList.map(promise =>
+			promise.then((res) => ({ status: 'ok', res }), (err) => ({ status: 'not ok', err }))
+		)
+	}
+	return Promise.all(handlePromise(threads))
+	.then(res => console.log(res),err=>console.log(err))
+
 }
 
 
