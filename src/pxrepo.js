@@ -140,25 +140,35 @@ class PixivFunc {
 		}
 	}
 
-	/**
-	 * 登录
-	 *
-	 * @static
-	 * @param {string} u 用户名
-	 * @param {string} p 密码
-	 * @memberof PixivFunc
-	 */
-	static async login(u, p) {
-		//登录
-		const pixiv = new PixivApi();
-		await pixiv.login(u, p);
-		//获取refresh_token
-		const refresh_token = pixiv.authInfo().refresh_token;
-		//更新配置
-		const conf = PixivFunc.readConfig();
-		conf.refresh_token = refresh_token;
-		PixivFunc.writeConfig(conf);
-	}
+
+static async login(code, code_verifier) {
+    // 登录
+    const pixiv = new PixivApi();
+    await pixiv.tokenRequest(code, code_verifier);
+    // 获取 refresh_token
+    const refresh_token = pixiv.authInfo().refresh_token;
+    // 更新配置
+    const conf = PixivFunc.readConfig();
+    conf.refresh_token = refresh_token;
+    PixivFunc.writeConfig(conf);
+}
+
+/**
+   * 使用 refreshToken 登录
+   *
+   * @static
+   * @param {string} token refreshToken
+   * @memberof PixivFunc
+   */
+static async loginByToken(token) {
+    // 测试登录
+    const pixiv = new PixivApi();
+    await pixiv.refreshAccessToken(token);
+    // 更新配置
+    const conf = PixivFunc.readConfig();
+    conf.refresh_token = token;
+    PixivFunc.writeConfig(conf);
+}
 
 	/**
 	 * 重登陆

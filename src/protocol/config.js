@@ -1,16 +1,17 @@
 const Fs = require('fs-extra');
 const Path = require('path');
 
-const CONFIG_FILE_DIR = require('appdata-path').getAppDataPath('pxder');
-const CONFIG_FILE = Path.resolve(CONFIG_FILE_DIR, 'protocol.json');
+const pxrepodir = Path.resolve(__dirname, '..');
+const configFileDir = Path.join(pxrepodir, 'config');
+const configFile = Path.join(configFileDir, 'config.json');
 
 const writeConfig = (config = { registered: false, port: 0 }) => {
-  Fs.ensureDirSync(CONFIG_FILE_DIR);
-  Fs.writeJsonSync(CONFIG_FILE, config);
+  Fs.ensureDirSync(configFileDir);
+  Fs.writeJsonSync(configFile, config);
   return config;
 };
 
-const readConfig = () => Fs.readJsonSync(CONFIG_FILE);
+const readConfig = () => Fs.readJsonSync(configFile);
 
 const getConfig = () => {
   try {
