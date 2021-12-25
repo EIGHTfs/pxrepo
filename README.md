@@ -4,7 +4,7 @@
 
 ### \*此项目的源码来自 GitHub 上的开源项目:[Tsuk1ko/pxder](https://github.com/Tsuk1ko/pxder)，为了针对个人体验时的想法进行了修改（因为我没学过nodejs,所以改得贼烂,依葫芦画瓢(复制粘贴)试出来的,专业不对口）
 
-![avatar](https://github.com/EIGHTfs/pxrepo/blob/main/%E8%BF%90%E8%A1%8C%E6%83%85%E5%86%B5.png?raw=true)
+![avatar](http://www.deathggunod.space/img/pxrepo/pxrepo.jpg)
 
 
 ## 准备
