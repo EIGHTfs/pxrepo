@@ -67,7 +67,7 @@ async function download(dirpath, filename, url, axiosOption,errorTimeout) {
 		});
 		data.on('error', reject);
 		setTimeout(_=>{
-			console.warn(`Promise time out:${errorTimeout}`)
+			//console.warn(`Promise time out:${errorTimeout}`)
     reject('Promise time out');
     }, errorTimeout);
 	});

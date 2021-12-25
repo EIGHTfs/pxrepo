@@ -148,10 +148,10 @@ async function getDownloadListByIllustrator(illustrator) {
 			}
 		}
 
-		if ((illusts.length % 1000) >= 500 && (illusts.length % 1000) <= 600) {
+		if ((illusts.length % 1000) >= 300 && (illusts.length % 1000) <= 400) {
 			//console.log('\n防止Rate Limit,暂停15秒');
 			//防止突破30次/min的限制
-			await Tools.sleep(15000);
+			await Tools.sleep(1000*15);
 		}
 
 	} while (illustrator.hasNext('illust') && cnt > 0 && illusts.length < 4500);
