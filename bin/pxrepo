@@ -22,8 +22,13 @@ const downJson = Path.join(configFileDir, 'download.json');//下载任务
 const blacklistJson = Path.join(configFileDir, 'blacklist.json');//黑名单
 const historyJson = Path.join(configFileDir, 'history.json');//历史下载
 const UpdateChecker = require('../src/updateChecker');
-const StreamZip = require('node-stream-zip');
-const shell = require("shelljs/global");
+
+const LoginProtocol = require('../src/protocol');
+const receiveLoginCode = require('../src/protocol/receiver');
+
+const prompts = require('prompts');
+const open = require('open');
+
 
 
 /*
@@ -166,21 +171,46 @@ async function handleArgv() {
 	//其他选项
 	let pass = false;
 	if (program.login) {
-		//登录
+		// 登录
 		console.log('\nPixiv Login\n'.cyan);
-		const u = readlinesync.question('Username: '.yellow);
-		const p = readlinesync.question('Password: '.yellow, { hideEchoBack: true });
 		try {
 			Pixiv.applyProxyConfig(config);
-			await Pixiv.login(u, p);
+			if (typeof program.login === 'string') {
+			// token 登录
+			const token = program.login.trim();
+			console.log('Login with refresh token', token.yellow);
+			await Pixiv.loginByToken(token);
+		} else {
+			// OAuth 登录
+			const { login_url, code_verifier } = pixivLogin();
+			let code;
+			if (process.platform === 'win32' && program.protocol && (await LoginProtocol.canInstall()) && (await LoginProtocol.install())) {
+				console.log('Login URL:', login_url.cyan);
+				console.log('Waiting login... More details:', 'https://git.io/Jt6Lj'.cyan);
+				open(login_url);
+				code = await receiveLoginCode();
+				await LoginProtocol.uninstall();
+			} else {
+				console.log('Before login, please read this first ->', 'https://git.io/Jt6Lj'.cyan);
+				if (!readline.keyInYN('Continue?')) process.exit();
+				console.log('\nLogin URL:', login_url.cyan);
+				open(login_url);
+				code = (() => {
+				while (true) {
+				const input = readline.question('Code: '.yellow);
+				if (input) return input;
+					}
+	})();
+			}
+			await Pixiv.login(code, code_verifier);
+		}
 			console.log('\nLogin success!\n'.green);
 		} catch (error) {
 			console.log('\nLogin fail!'.red, 'Please check your input or proxy setting.\n');
-			if (global.p_debug) console.error(error);
+		if (global.p_debug) console.error(error);
 		}
-	}
-	else if (program.logout) {
-		//登出
+		} else if (program.logout) {
+		// 登出
 		Pixiv.logout();
 		console.log('\nLogout success!\n'.green);
 	}
@@ -232,11 +262,17 @@ async function handleArgv() {
 
 					switch (index) {
 				case 0: //下载路径
-					config.download.path = readlinesync.questionPath('Please input a download path:\n'.yellow, {
-						isDirectory: true,
-						exists: null,
-						cd: false
-					});
+				const initial = config.download.path || '';
+				config.download.path =
+				(
+					await prompts({
+						type: 'text',
+						name: 'value',
+						message: 'Please input a download path'.yellow,
+					format: v => Path.resolve(v.trim()),
+						initial,
+					})
+					).value || initial;
 					break;
 
 				case 1: //下载线程

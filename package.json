@@ -1,6 +1,6 @@
 {
   "name": "pxrepo",
-  "version": "2.1.6",
+  "version": "2.1.7",
   "description": "源码来自GitHub上的开源项目：https://github.com/Tsuk1ko/pxder",
   "main": "index.js",
   "dependencies": {
@@ -16,7 +16,9 @@
     "node-fetch": "^2.6.0",
     "node-stream-zip": "^1.9.1",
     "pixiv-api-client": "^0.22.0",
+    "prompts": "^2.4.2",
     "readline-sync": "^1.4.10",
+    "register-protocol-win32": "^1.1.0",
     "shelljs": "^0.8.4",
     "socks-proxy-agent": "^5.0.0"
   },
