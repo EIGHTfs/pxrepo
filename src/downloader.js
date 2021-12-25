@@ -59,9 +59,9 @@ async function downloadByIllustrators(illustrators, callback) {
 			continue;
 		}
 		let historys = require(historyJson)
-	
+
 		Tools.CheckExist(historys, illustrator.id.toString(), historyJson, illustrator.name)
-		complete=Path.join(tempdir, illustrator.id.toString());
+		complete = Path.join(tempdir, illustrator.id.toString());
 		console.log(complete);
 
 		//取得下载信息
@@ -88,7 +88,7 @@ async function downloadByIllustrators(illustrators, callback) {
  * @returns
  */
 async function getDownloadListByIllustrator(illustrator) {
-	
+
 
 	let illusts = [];
 
@@ -100,16 +100,16 @@ async function getDownloadListByIllustrator(illustrator) {
 	function isonline() {
 		var isOnline = require('is-online');
 		isOnline({
-			timeout: 2500,
+			timeout: 2000,
 			version: "v4" // v4 or v6
 		}).then(online => {
 			if (online) {
 				//console.log("Network".green);
-				Network = 90;
+				Network = 100;
 				//console.log(Network);
 			} else {
 				//console.log("Network".yellow);
-				Network = 180;
+				Network = 200;
 				//console.log(Network);
 			}
 		});
@@ -217,10 +217,12 @@ function downloadIllusts(illusts, dldir, configThread) {
 	//开始多线程下载
 	let errorThread = 0;
 	let pause = false;
-	let hangup = 5 * 60 * 1000;
-	let errorTimeout = null;
+	let hangup = 1000 * 60 * 5;
+	let errorTimeout = 1000 * 60;
+	
 	//单个线程
 	function singleThread(threadID) {
+		
 		return new Promise(async resolve => {
 			while (true) {
 				let i = totalI++;
@@ -233,12 +235,13 @@ function downloadIllusts(illusts, dldir, configThread) {
 					headers: {
 						referer: pixivRefer,
 					},
-					timeout: 1000 * 5,
+					timeout: 1000 * 15,
 				};
 				//代理
 				if (httpsAgent) options.httpsAgent = httpsAgent;
 
 				//开始下载
+				
 				console.log(`[${threadID + 1}]   \t${(parseInt(i) + 1).toString().green}/${illusts.length}    \t${"pid".gray}  ${illust.id.toString().cyan}   \t${illust.title.yellow}`);
 				//const processDisplay = Tools.showProgress(() => `  [${threadID +1}]`);
 
@@ -247,7 +250,7 @@ function downloadIllusts(illusts, dldir, configThread) {
 
 				await (async function tryDownload(times) {
 
-					if (times > 10) {
+					if (times > 3) {
 						if (errorThread > 1) {
 							if (errorTimeout) clearTimeout(errorTimeout);
 							errorTimeout = setTimeout(() => {
@@ -263,7 +266,7 @@ function downloadIllusts(illusts, dldir, configThread) {
 					}
 					//失败重试				
 					var tempDir = complete;
-					return Tools.download(tempDir, illust.file, illust.url, options).then(async res => {
+					return Tools.download(tempDir, illust.file, illust.url, options, errorTimeout).then(async res => {
 						//文件完整性校验
 						let fileSize = res.headers['content-length'];
 						let dlfile = Path.join(tempDir, illust.file);
@@ -287,7 +290,7 @@ function downloadIllusts(illusts, dldir, configThread) {
 							Fs.unlinkSync(dlfile);
 							throw new Error('Incomplete download');
 						}
-
+						
 						if (times != 1) errorThread--;
 					})
 						.catch(e => {
@@ -307,11 +310,11 @@ function downloadIllusts(illusts, dldir, configThread) {
 	let threads = [];
 
 	//开始多线程
-	for (let t = 0; t < (Math.ceil(downthread / Network) + configThread) && t < configThread + 10; t++)//
+	for (let t = 0; t < (Math.ceil(downthread / Network) + configThread) && t < configThread + 2; t++)//
 	{
 
 		threads.push(singleThread(t).catch(e => {
-			if (global.p_debug) console.log(e);
+			console.log(e);
 		}));
 
 	}
@@ -322,7 +325,7 @@ function downloadIllusts(illusts, dldir, configThread) {
 		)
 	}
 	return Promise.all(handlePromise(threads))
-	.then(res => console.log(res),err=>console.log(err))
+		.then(res => console.log(res), err => console.log(err))
 
 }
 

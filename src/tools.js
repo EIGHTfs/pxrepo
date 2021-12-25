@@ -51,7 +51,8 @@ function clearProgress(interval) {
  * @param {*} axiosOption Option for axios
  * @returns Axios promise
  */
-async function download(dirpath, filename, url, axiosOption) {
+async function download(dirpath, filename, url, axiosOption,errorTimeout) {
+	console.time(filename)
 	Fse.ensureDirSync(dirpath);
 	axiosOption.responseType = 'stream';
 
@@ -61,9 +62,14 @@ async function download(dirpath, filename, url, axiosOption) {
 	return new Promise((reslove, reject) => {
 		data.pipe(Fse.createWriteStream(Path.join(dirpath, filename)));
 		data.on('end', () => {
+			console.timeEnd(filename)
 			reslove(response);
 		});
 		data.on('error', reject);
+		setTimeout(_=>{
+			console.warn(`Promise time out:${errorTimeout}`)
+    reject('Promise time out');
+    }, errorTimeout);
 	});
 }
 
