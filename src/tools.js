@@ -20,26 +20,26 @@ const StreamZip = require('node-stream-zip');
  * @returns 目录下的文件列表
  */
 function readDirSync(dirpath) {
-	return new Promise((resolve, reject) => {
-		Fs.readdir(dirpath, (e, files) => {
-			if (e) reject(e);
-			else resolve(files);
-		});
-	});
+    return new Promise((resolve, reject) => {
+        Fs.readdir(dirpath, (e, files) => {
+            if (e) reject(e);
+            else resolve(files);
+        });
+    });
 }
 
 function showProgress(valFn) {
-	return setInterval(() => {
-		Readline.clearLine(process.stdout, 0);
-		Readline.cursorTo(process.stdout, 0);
-		process.stdout.write('Progress: ' + `${valFn()}`.green);
-	}, 500);
+    return setInterval(() => {
+        Readline.clearLine(process.stdout, 0);
+        Readline.cursorTo(process.stdout, 0);
+        process.stdout.write('Progress: ' + `${valFn()}`.green);
+    }, 500);
 }
 
 function clearProgress(interval) {
-	clearInterval(interval);
-	Readline.clearLine(process.stdout, 0);
-	Readline.cursorTo(process.stdout, 0);
+    clearInterval(interval);
+    Readline.clearLine(process.stdout, 0);
+    Readline.cursorTo(process.stdout, 0);
 }
 
 /**
@@ -51,39 +51,39 @@ function clearProgress(interval) {
  * @param {*} axiosOption Option for axios
  * @returns Axios promise
  */
-async function download(dirpath, filename, url, axiosOption,errorTimeout) {
-	console.time(filename)
-	Fse.ensureDirSync(dirpath);
-	axiosOption.responseType = 'stream';
+async function download(dirpath, filename, url, axiosOption, errorTimeout) {
+    console.time(filename)
+    Fse.ensureDirSync(dirpath);
+    axiosOption.responseType = 'stream';
 
-	const response = await Axios.create(axiosOption).get(global.cf ? url.replace('i.pximg.net', 'i-cf.pximg.net') : url.replace('i-cf.pximg.net', 'i.pximg.net'));
-	const data = response.data;
+    const response = await Axios.create(axiosOption).get(global.cf ? url.replace('i.pximg.net', 'i-cf.pximg.net') : url.replace('i-cf.pximg.net', 'i.pximg.net'));
+    const data = response.data;
 
-	return new Promise((reslove, reject) => {
-		data.pipe(Fse.createWriteStream(Path.join(dirpath, filename)));
-		data.on('end', () => {
-			console.timeEnd(filename)
-			reslove(response);
-		});
-		data.on('error', reject);
-		setTimeout(_=>{
-			//console.warn(`Promise time out:${errorTimeout}`)
-    reject('Promise time out');
-    }, errorTimeout);
-	});
+    return new Promise((reslove, reject) => {
+        data.pipe(Fse.createWriteStream(Path.join(dirpath, filename)));
+        data.on('end', () => {
+            console.timeEnd(filename)
+            reslove(response);
+        });
+        data.on('error', reject);
+        setTimeout(_ => {
+            //console.warn(`Promise time out:${errorTimeout}`)
+            reject('Promise time out');
+        }, errorTimeout);
+    });
 }
 
 
 
 function mkdirsSync(dirpath) {
-	let parentDir = Path.dirname(dirpath);
-	//如果目标文件夹不存在但是上级文件夹存在
-	if (!Fs.existsSync(dirpath) && Fs.existsSync(parentDir)) {
-		Fs.mkdirSync(dirpath);
-	} else {
-		mkdirsSync(parentDir);
-		Fs.mkdirSync(dirpath);
-	}
+    let parentDir = Path.dirname(dirpath);
+    //如果目标文件夹不存在但是上级文件夹存在
+    if (!Fs.existsSync(dirpath) && Fs.existsSync(parentDir)) {
+        Fs.mkdirSync(dirpath);
+    } else {
+        mkdirsSync(parentDir);
+        Fs.mkdirSync(dirpath);
+    }
 }
 
 
@@ -96,72 +96,70 @@ function mkdirsSync(dirpath) {
  */
 function CheckExist(follows, uid, FileJson, illustrator_name, remark) {
 
-	if (
-		JSON.stringify(follows).search(
+    if (
+        JSON.stringify(follows).search(
 
-			'\"id\":' +
-			parseInt(uid) +
-			","
-		) == -1 &&
-		JSON.stringify(follows).search(
-			'\"id\":' +
-			parseInt(uid) +
-			"}"
-		) == -1
-	) {
-		if (FileJson != null) {
-			if (illustrator_name != null) {
+            '\"id\":' +
+            parseInt(uid) +
+            ","
+        ) == -1 &&
+        JSON.stringify(follows).search(
+            '\"id\":' +
+            parseInt(uid) +
+            "}"
+        ) == -1
+    ) {
+        if (FileJson != null) {
+            if (illustrator_name != null) {
 
-				console.log({
-					id: parseInt(uid),
-					name: illustrator_name,
-				});
-				follows.push({
-					id: parseInt(uid),
-					name: illustrator_name,
-				});
+                console.log({
+                    id: parseInt(uid),
+                    name: illustrator_name,
+                });
+                follows.push({
+                    id: parseInt(uid),
+                    name: illustrator_name,
+                });
 
-			}
-			else {
-				console.log({
-					id: parseInt(uid),
-				});
-				follows.push({
-					id: parseInt(uid),
-				});
-			}
-			Fs.writeFileSync(FileJson, JSON.stringify(follows));
-		}
-		//else console.log('不写入');
-		return false;
-	} else return true;
+            } else {
+                console.log({
+                    id: parseInt(uid),
+                });
+                follows.push({
+                    id: parseInt(uid),
+                });
+            }
+            Fs.writeFileSync(FileJson, JSON.stringify(follows));
+        }
+        //else console.log('不写入');
+        return false;
+    } else return true;
 }
 
 
 function readJsonSafely(path, defaultValue) {
-	if (!Fse.existsSync(path)) return defaultValue;
-	try {
-		return Fse.readJsonSync(path);
-	} catch (error) { }
-	return defaultValue;
+    if (!Fse.existsSync(path)) return defaultValue;
+    try {
+        return Fse.readJsonSync(path);
+    } catch (error) {}
+    return defaultValue;
 }
 
 function sleep(ms) {
-	return new Promise(resolve => {
-		setTimeout(resolve, ms);
-	});
+    return new Promise(resolve => {
+        setTimeout(resolve, ms);
+    });
 }
 
 
 
 module.exports = {
-	readDirSync,
-	showProgress,
-	clearProgress,
-	download,
-	mkdirsSync,
-	readJsonSafely,
-	CheckExist,
-	sleep,
+    readDirSync,
+    showProgress,
+    clearProgress,
+    download,
+    mkdirsSync,
+    readJsonSafely,
+    CheckExist,
+    sleep,
 };
-
