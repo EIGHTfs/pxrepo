@@ -148,7 +148,7 @@ async function getDownloadListByIllustrator(illustrator) {
             }
         }
 
-        if ((illusts.length % 300) >= 0 && (illusts.length % 300) <= 100) {
+        if ((illusts.length % 300) >= 200 && (illusts.length % 300) <= 299) {
             console.log('\n防止Rate Limit,暂停15秒');
             //防止突破30次/min的限制
             await Tools.sleep(1000 * 15);
