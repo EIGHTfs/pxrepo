@@ -49,16 +49,11 @@ program
     .option('')
     .option('-f, --follow', '获取公开关注')
     .option('-F, --follow-private', '获取私密关注')
-    .option('    --aptend', '继续获取新的画师信息')
-    .option('    --force')
     .option('')
     .option('-b, --bookmark', '下载收藏')
     .option('-B, --bookmark-private', '下载私密收藏')
     .option('')
-    .option('-U, --update', "下载插图，也可以对所有画师插图更新下载")
-
-.option('    --repair', '依据history.json下载，history.json保存有下载过的画师的ID')
-    .option('-C, --shift', '跳过一个画师，某个画师的下载任务出错时使用，比如画师的账号被禁用')
+    .option('-U, --update [Json]', "下载插图，也可以对所有画师插图更新下载")
     .option('-D, --delete', '清除未完成下载的文件')
     .option('-l, --blacklist <uid(s)>', '添加到黑名单，可以跳过该画师的下载')
     .option('')
@@ -118,17 +113,27 @@ handleArgv()
         }
 
         ///////////////////////
-        if (program.update) //||program.force) 
-        {
-            await pixiv.downloadUpdate(program.aptend); //,program.force);
+        if (program.update) {
+            let Json = program.update
+            console.log(Json)
+            if (typeof Json == 'string') {
+                switch (Json) {
+                    case 'downJson':
+                        await pixiv.downloadUpdate(downJson)
+                        break;
+                    case 'historyJson':
+                        await pixiv.downloadUpdate(historyJson)
+                        break;
+                    case 'blacklistJson':
+                        await pixiv.downloadUpdate(blacklistJson)
+                        break;
+                    default:
+                        await pixiv.downloadUpdate(Json)
+                }
+            } else await pixiv.downloadUpdate(downJson)
+
         }
-        if (program.repair) {
-            var follows = [];
-            if (Fs.existsSync(historyJson)) {
-                var follows = require(historyJson);
-                Fs.writeFileSync(downJson, JSON.stringify(follows));
-            } else console.log("没有下载历史");
-        }
+
         /////////////////////////
         if (program.bookmark) await pixiv.downloadBookmark();
         if (program.bookmarkPrivate) await pixiv.downloadBookmark(true);
@@ -231,13 +236,6 @@ async function handleArgv() {
 
 
 
-    } else if (program.shift) {
-        var follows = [];
-        if (Fs.existsSync(downJson)) {
-            var follows = require(downJson);
-            console.log(follows.shift());
-            Fs.writeFileSync(downJson, JSON.stringify(follows));
-        }
 
     } else if (program.setting) {
         //设置
@@ -323,7 +321,7 @@ async function handleArgv() {
         //得到UID
         let uids = program.blacklist;
         let blacklist = [];
-        if (typeof uids == 'string') {
+        if (typeof uids === 'string') {
             uids = uids.split(',');
 
             const uidArray = Array.isArray(uids) ? uids : [uids];

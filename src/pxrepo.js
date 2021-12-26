@@ -454,7 +454,7 @@ class PixivFunc {
      *
      * @memberof PixivFunc
      */
-    async downloadUpdate(aptend) {
+    async downloadUpdate(Json) {
         const uids = [];
         let follows = [];
         let historys = [];
@@ -481,29 +481,13 @@ class PixivFunc {
             }));
             Fs.writeFileSync(downJson, JSON.stringify(follows));
 
-        } else if (aptend) //如果存在downJson则添加downJson中没有的到downJson末尾
-        {
-
-            follows = require(downJson);
-            uids.forEach(uid => Tools.CheckExist(follows, uid, downJson));
-            ////uids.forEach(uid => follows.push(new Illustrator(uid)));	
-
-
         }
-        follows = require(downJson);
+        follows = require(Json);
         //////////////////////////	
         if (!Fs.existsSync(historyJson)) //如果不存在historyJson则创建
         {
 
             Fs.writeFileSync(historyJson, JSON.stringify(follows));
-
-        } else if (aptend) //如果存在historyJson则添加historyJson中没有的到historyJson末尾
-        {
-
-            historys = require(historyJson);
-            uids.forEach(uid => Tools.CheckExist(historys, uid, historyJson));
-            ////uids.forEach(uid => follows.push(new Illustrator(uid)));	
-
 
         }
 
