@@ -401,13 +401,7 @@ class PixivFunc {
 
             await this.getAllMyFollow(isPrivate).then(ret => {
                 illustrators = ret;
-                /*
-                				follows = require(downJson);
-                				ret.forEach(uid => CheckExist(uid));
-                				
-                				
-                				Fs.writeFileSync(downJson, JSON.stringify(follows));
-                /**/
+
                 ret.forEach(
                     illustrator => follows.push({
                         id: illustrator.id,
@@ -510,8 +504,9 @@ class PixivFunc {
 
 
             Fs.writeFileSync(Json, JSON.stringify(follows));
-        });
-        Fs.unlinkSync(Json);
+        })
+        if (Json != blacklistJson)
+            Fs.unlinkSync(Json)
 
 
     }

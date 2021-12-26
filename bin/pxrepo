@@ -77,8 +77,14 @@ handleArgv()
             console.log('\nRun ' + 'pxrepo -h'.yellow + ' for more usage information.\n');
             process.exit();
         }
-        Pixiv.applyConfig(config);
+        Pixiv.applyConfig(config)
 
+        if (!Fs.existsSync(blacklistJson)) //如果不存在blacklistJson则创建
+        {
+
+            Fs.writeFileSync(blacklistJson, '[{\"id\":' + parseInt(11) + '}]');
+
+        }
 
         //检查更新
         const updater = new UpdateChecker();
@@ -318,6 +324,7 @@ async function handleArgv() {
 
         console.log('Exit'.green);
     } else if (program.blacklist) {
+
         //得到UID
         let uids = program.blacklist;
         let blacklist = [];
@@ -327,12 +334,7 @@ async function handleArgv() {
             const uidArray = Array.isArray(uids) ? uids : [uids];
             for (const uid of uidArray) {
                 //添加黑名单
-                if (!Fs.existsSync(blacklistJson)) //如果不存在blacklistJson则创建
-                {
 
-                    Fs.writeFileSync(blacklistJson, '[{\"id\":' + parseInt(11) + '}]');
-
-                }
                 blacklist = require(blacklistJson);
                 if (!Tools.CheckExist(blacklist, uid, blacklistJson)) { console.log('将 \t (' + uid + ') \t 添加到了黑名单'); } else console.log('(' + uid + ')\t' + '存在于黑名单');
 
