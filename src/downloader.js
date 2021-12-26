@@ -148,8 +148,8 @@ async function getDownloadListByIllustrator(illustrator) {
             }
         }
 
-        if ((illusts.length % 1000) >= 300 && (illusts.length % 1000) <= 400) {
-            //console.log('\n防止Rate Limit,暂停15秒');
+        if ((illusts.length % 300) >= 0 && (illusts.length % 300) <= 100) {
+            console.log('\n防止Rate Limit,暂停15秒');
             //防止突破30次/min的限制
             await Tools.sleep(1000 * 15);
         }
@@ -217,8 +217,8 @@ function downloadIllusts(illusts, dldir, configThread) {
     //开始多线程下载
     let errorThread = 0;
     let pause = false;
-    let hangup = 1000 * 60 * 5;
-    let errorTimeout = 1000 * 60;
+    let hangup = 1000 * 60 * 1;
+    let errorTimeout = 1000 * 45;
 
     //单个线程
     function singleThread(threadID) {
@@ -254,7 +254,7 @@ function downloadIllusts(illusts, dldir, configThread) {
                         if (errorThread > 1) {
                             if (errorTimeout) clearTimeout(errorTimeout);
                             errorTimeout = setTimeout(() => {
-                                console.log('\n' + 'Network error! Pause 5 minutes.'.red + '\n');
+                                console.log('\n' + '网络错误，暂停'.red + '\n');
                             }, 1000);
                             pause = true;
                         } else return;
@@ -325,7 +325,7 @@ function downloadIllusts(illusts, dldir, configThread) {
         )
     }
     return Promise.all(handlePromise(threads))
-        .then(res => console.log(res), err => console.log(err))
+        //.then(res => console.log(res), err => console.log(err))
 
 }
 
