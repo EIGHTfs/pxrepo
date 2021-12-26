@@ -44,8 +44,7 @@ pxrepo --logout
 `pxrepo -U downJson`
 `pxrepo -U historyJson`
 
-####任意路径下的json文件 
-
+#### 任意路径下的json文件 
 `pxrepo -U Z:\pxrepo\config\download.json`
 
 `pxrepo --setting`
