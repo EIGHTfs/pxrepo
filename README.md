@@ -37,30 +37,23 @@ pxrepo --logout
 
 ## 对 pxder 的修改
 
-
-`pxder -f` `pxder -F`#### 分别会创建`public.json`或`private.json`，获取完指定的所有关注列表开始下载，若已存在文件便直接开始下载
-
-
-
-`pxrepo -f` `pxrepo -F`#### 创建`download.json`，获取关注时每获取一批（30 个)就写入一次，同时直接在下载目录下创建画师对应文件夹
-
-
-
-`pxder -U`#### 读取所有下载的画师进行更新
-
-
-
-`pxrepo -U`#### `download.json`不存在，读取所有下载的画师(通过画师对应的文件夹),写入到`download.json`然后进行更新，`download.json`存在即为下载功能，追加参数指定json文件下载，可以通过指定不同json文件多开
+`pxrepo -U`
+#### `download.json`不存在，读取所有下载的画师(通过画师对应的文件夹),写入到`download.json`然后进行更新，`download.json`存在即为下载功能，追加参数指定json文件下载，可以通过指定不同json文件多开
 
 `pxrepo -U downJson`
 `pxrepo -U historyJson`
-`pxrepo -U Z:\pxrepo\config\download.json`####任意路径下的json文件 
 
-`pxder --setting`#### 能够设置超时时间，下载线程默认 5，最大 32
+####任意路径下的json文件 
+`pxrepo -U Z:\pxrepo\config\download.json`
+
+
+`pxder --setting`
+#### 能够设置超时时间，下载线程默认 5，最大 32
 
 
 
-`pxrepo --setting`#### 不能够设置超时时间(我预设了)，线程上限随手改高了，可以设置到 90，默认为 32，然后图片太多实际会比设置的多几个线程
+`pxrepo --setting`
+#### 不能够设置超时时间(我预设了)，线程上限随手改高了，可以设置到 90，默认为 32，然后图片太多实际会比设置的多几个线程
 
 
 
