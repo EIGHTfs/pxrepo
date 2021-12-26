@@ -46,12 +46,6 @@ pxrepo --logout
 ####任意路径下的json文件 
 `pxrepo -U Z:\pxrepo\config\download.json`
 
-
-`pxder --setting`
-#### 能够设置超时时间，下载线程默认 5，最大 32
-
-
-
 `pxrepo --setting`
 #### 不能够设置超时时间(我预设了)，线程上限随手改高了，可以设置到 90，默认为 32，然后图片太多实际会比设置的多几个线程
 
