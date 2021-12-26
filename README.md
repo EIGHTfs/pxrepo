@@ -38,12 +38,14 @@ pxrepo --logout
 ## 对 pxder 的修改
 
 `pxrepo -U`
+
 #### `download.json`不存在，读取所有下载的画师(通过画师对应的文件夹),写入到`download.json`然后进行更新，`download.json`存在即为下载功能，追加参数指定json文件下载，可以通过指定不同json文件多开
 
 `pxrepo -U downJson`
 `pxrepo -U historyJson`
 
 ####任意路径下的json文件 
+
 `pxrepo -U Z:\pxrepo\config\download.json`
 
 `pxrepo --setting`
