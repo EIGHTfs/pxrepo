@@ -509,9 +509,9 @@ class PixivFunc {
             ;
 
 
-            Fs.writeFileSync(downJson, JSON.stringify(follows));
+            Fs.writeFileSync(Json, JSON.stringify(follows));
         });
-        Fs.unlinkSync(downJson);
+        Fs.unlinkSync(Json);
 
 
     }
