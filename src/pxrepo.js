@@ -6,9 +6,14 @@ const Fs = require('fs');
 const Fse = require('fs-extra');
 const Path = require('path');
 const utils = require('./plugins/utils')
-const { getProxyAgent, getSysProxy } = require('./proxy');
+const {
+    getProxyAgent,
+    getSysProxy
+} = require('./proxy');
 let __config;
-const { Agent } = require('https');
+const {
+    Agent
+} = require('https');
 
 class PixivFunc {
     constructor() {
@@ -427,9 +432,8 @@ class PixivFunc {
 
         //开始下载
         await Downloader.downloadByIllustrators(illustrators, () => {
-            //			follows.shift();
-            //			Fs.writeFileSync(downJson, JSON.stringify(follows));
-        });
+
+        })
 
         //清除临时文件
         Fs.unlinkSync(global.downJson);

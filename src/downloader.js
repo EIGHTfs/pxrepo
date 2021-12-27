@@ -48,13 +48,13 @@ async function downloadByIllustrators(illustrators, callback) {
         console.log("\nCollecting illusts of " + (parseInt(i) + 1).toString().green + "/" + illustrators.length + " uid ".gray + illustrator.id.toString().cyan + " " + illustrator.name.yellow);
 
         illustrator_id = illustrator.id;
-        if (utils.CheckExist(global.blacklist, illustrator_id)) {
+        if (utils.checkExist(global.blacklist, illustrator_id)) {
             console.log('黑名单：\t (' + illustrator_id + ')');
             continue;
         }
-        let historys = require(historyJson)
+        global.historys = require(global.historyJson)
 
-        utils.CheckExist(historys, illustrator.id.toString(), historyJson, illustrator.name)
+        utils.checkExist(historys, illustrator.id.toString(), historyJson, illustrator.name)
         complete = Path.join(tempdir, illustrator.id.toString());
         console.log(complete);
 
@@ -315,7 +315,13 @@ function downloadIllusts(illusts, dldir, configThread) {
     //return Promise.all(threads)
     function handlePromise(promiseList) {
         return promiseList.map(promise =>
-            promise.then((res) => ({ status: 'ok', res }), (err) => ({ status: 'not ok', err }))
+            promise.then((res) => ({
+                status: 'ok',
+                res
+            }), (err) => ({
+                status: 'not ok',
+                err
+            }))
         )
     }
     return Promise.all(handlePromise(threads))
@@ -365,7 +371,9 @@ async function getIllustratorNewDir(data) {
 
             await utils.readDirSync(fdir).then(files => {
                 for (let file of files) {
-                    Fse.moveSync(Path.join(fdir, file), Path.join(Fdir, file), { overwrite: true })
+                    Fse.moveSync(Path.join(fdir, file), Path.join(Fdir, file), {
+                        overwrite: true
+                    })
                 }
 
             })

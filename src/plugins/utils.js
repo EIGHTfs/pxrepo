@@ -90,19 +90,19 @@ function mkdirsSync(dirpath) {
 /**
  * 检查我的画师列表是否已存在下载任务
  *
- * @param {stringn} [follows] 
+ * @param {stringn} [items] 
  * @param {int} [uid] 画师UID
  */
-function CheckExist(follows, uid, FileJson, illustrator_name, remark) {
+function checkExist(items, uid, FileJson, illustrator_name, remark) {
 
     if (
-        JSON.stringify(follows).search(
+        JSON.stringify(items).search(
 
             '\"id\":' +
             parseInt(uid) +
             ","
         ) == -1 &&
-        JSON.stringify(follows).search(
+        JSON.stringify(items).search(
             '\"id\":' +
             parseInt(uid) +
             "}"
@@ -115,7 +115,7 @@ function CheckExist(follows, uid, FileJson, illustrator_name, remark) {
                     id: parseInt(uid),
                     name: illustrator_name,
                 });
-                follows.push({
+                items.push({
                     id: parseInt(uid),
                     name: illustrator_name,
                 });
@@ -124,18 +124,36 @@ function CheckExist(follows, uid, FileJson, illustrator_name, remark) {
                 console.log({
                     id: parseInt(uid),
                 });
-                follows.push({
+                items.push({
                     id: parseInt(uid),
                 });
+
             }
-            fs.writeFileSync(FileJson, JSON.stringify(follows));
+            fs.writeFileSync(FileJson, JSON.stringify(items));
         }
-        return false;
-    } else return true;
+        return false
+    } else return true
 }
 
+function showExists(FileJson) {
+    let json = require(FileJson)
+    console.log(json)
+}
 
+function deleteExist(uid, FileJson) {
+    let json = require(FileJson)
+    for (let i in json) {
+        var item = json[i].id
+            //console.log(item)
+        if (item == uid) {
+            console.log(i)
+            json.splice(i, 1)
+        }
 
+    }
+
+    return json
+}
 
 function sleep(ms) {
     return new Promise(resolve => {
@@ -152,6 +170,8 @@ module.exports = {
     download,
     mkdirsSync,
     readJsonSafely,
-    CheckExist,
+    checkExist,
     sleep,
+    showExists,
+    deleteExist
 };

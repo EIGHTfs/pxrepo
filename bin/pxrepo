@@ -13,7 +13,10 @@ const program = require('commander');
 const readlinesync = require('readline-sync');
 const Path = require('path');
 
-const { checkProxy, getSysProxy } = require('../src/proxy');
+const {
+    checkProxy,
+    getSysProxy
+} = require('../src/proxy');
 
 const UpdateChecker = require('../src/updateChecker');
 
@@ -138,7 +141,8 @@ handleArgv()
                         await pixiv.downloadUpdate(global.blacklistJson)
                         break;
                     default:
-                        await pixiv.downloadUpdate(Json)
+                        if (Fs.existsSync(Json))
+                            await pixiv.downloadUpdate(Json)
                 }
             } else await pixiv.downloadUpdate(downJson)
 
@@ -201,7 +205,10 @@ async function handleArgv() {
                 await Pixiv.loginByToken(token);
             } else {
                 // OAuth 登录
-                const { login_url, code_verifier } = pixivLogin();
+                const {
+                    login_url,
+                    code_verifier
+                } = pixivLogin();
                 let code;
                 if (process.platform === 'win32' && program.protocol && (await LoginProtocol.canInstall()) && (await LoginProtocol.install())) {
                     console.log('Login URL:', login_url.cyan);
@@ -331,7 +338,6 @@ async function handleArgv() {
 
         //得到UID
         let uids = program.blacklist;
-        let blacklist = [];
         if (typeof uids === 'string') {
             uids = uids.split(',');
 
@@ -339,8 +345,23 @@ async function handleArgv() {
             for (const uid of uidArray) {
                 //添加黑名单
 
-                blacklist = require(blacklistJson);
-                if (!utils.CheckExist(blacklist, uid, blacklistJson)) { console.log('将 \t (' + uid + ') \t 添加到了黑名单'); } else console.log('(' + uid + ')\t' + '存在于黑名单');
+                global.blacklist = require(global.blacklistJson);
+                if (!utils.checkExist(global.blacklist, uid, global.blacklistJson)) {
+                    console.log('将 \t (' + uid + ') \t 添加到了黑名单')
+                    utils.showExists(global.blacklistJson)
+                } else {
+                    console.log('(' + uid + ')\t' + '存在于黑名单,此次操作为移出黑名单')
+
+                    Fs.writeFileSync(global.blacklistJson, JSON.stringify(utils.deleteExist(uid, global.blacklistJson)));
+
+
+                    utils.showExists(global.blacklistJson)
+
+                }
+
+
+
+
 
             }
 
