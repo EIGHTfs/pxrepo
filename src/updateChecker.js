@@ -2,7 +2,7 @@ const getLatestVersion = require('latest-version');
 const compareVersions = require('compare-versions');
 const Fse = require('fs-extra');
 const Path = require('path');
-const Tools = require('./tools');
+const utils = require('./plugins/utils');
 const pxrepodir = Path.resolve(__dirname, '..');
 const configFileDir = Path.join(pxrepodir, 'config');
 const checkLogFile = Path.join(pxrepodir, 'update.json');
@@ -10,7 +10,7 @@ const { name, version } = require('../package.json');
 
 class UpdateChecker {
     constructor() {
-        this.info = Tools.readJsonSafely(checkLogFile, {
+        this.info = utils.readJsonSafely(checkLogFile, {
             lastCheck: 0,
             latestVersion: '0',
         });

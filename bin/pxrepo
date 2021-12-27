@@ -5,7 +5,7 @@
 require('colors');
 const Pixiv = require('../src/pxrepo');
 const pixivLogin = require('../src/pixiv-login');
-const Tools = require('../src/tools');
+const utils = require('../src/plugins/utils');
 const Downloader = require('../src/downloader');
 const Illustrator = require('../src/illustrator');
 const pkg = require('../package.json');
@@ -230,7 +230,7 @@ async function handleArgv() {
         console.log('\nLogout success!\n'.green);
     } else if (program.delete) {
 
-        await Tools.readDirSync(tempdir).then(files => {
+        await utils.readDirSync(tempdir).then(files => {
             for (let file of files) {
 
                 Fse.removeSync(Path.join(tempdir, file));
@@ -336,7 +336,7 @@ async function handleArgv() {
                 //添加黑名单
 
                 blacklist = require(blacklistJson);
-                if (!Tools.CheckExist(blacklist, uid, blacklistJson)) { console.log('将 \t (' + uid + ') \t 添加到了黑名单'); } else console.log('(' + uid + ')\t' + '存在于黑名单');
+                if (!utils.CheckExist(blacklist, uid, blacklistJson)) { console.log('将 \t (' + uid + ') \t 添加到了黑名单'); } else console.log('(' + uid + ')\t' + '存在于黑名单');
 
             }
 

@@ -5,7 +5,7 @@ const Illustrator = require('./illustrator');
 const Fs = require('fs');
 const Fse = require('fs-extra');
 const Path = require('path');
-const Tools = require('./tools');
+const utils = require('./plugins/utils');
 const readline = require('readline-sync');
 const { getProxyAgent, getSysProxy } = require('./proxy');
 const pxrepodir = Path.resolve(__dirname, '..');
@@ -238,7 +238,7 @@ class PixivFunc {
             var offset = '';
             for (const preview of data.user_previews) {
 
-                if (Tools.CheckExist(blacklist, preview.user.id)) {
+                if (utils.CheckExist(blacklist, preview.user.id)) {
                     console.log('黑名单：\t (' + preview.user.id + ')');
                     continue;
                 } else {
@@ -253,7 +253,7 @@ class PixivFunc {
 
 
                     dir_Illustrator = Path.join(__config.download.path, '(' + preview.user.id + ')' + iName);
-                    if (Tools.CheckExist(blacklist, preview.user.id))
+                    if (utils.CheckExist(blacklist, preview.user.id))
                         if (!Fs.existsSync(dir_Illustrator))
                             Fs.mkdirSync(dir_Illustrator);
 
@@ -308,7 +308,7 @@ class PixivFunc {
     async getAllMyFollow(isPrivate = false, aptend) {
         let follows = [];
         let historys = [];
-        const processDisplay = Tools.showProgress(() => follows.length);
+        const processDisplay = utils.showProgress(() => follows.length);
         let uid;
 
         if (!Fs.existsSync(downJson)) //如果不存在downJson则创建
@@ -337,7 +337,7 @@ class PixivFunc {
 
 
         ///////////////
-        Tools.clearProgress(processDisplay);
+        utils.clearProgress(processDisplay);
 
         return follows;
     }
@@ -353,7 +353,7 @@ class PixivFunc {
         for (const uid of uidArray) {
             //判断作品是否在黑名单
             blacklist = require(blacklistJson)
-            if (Tools.CheckExist(blacklist, uid)) {
+            if (utils.CheckExist(blacklist, uid)) {
                 console.log('黑名单：\t (' + uid + ')');
                 continue;
             } else {
@@ -456,7 +456,7 @@ class PixivFunc {
         //得到文件夹内所有UID
 
 
-        await Tools.readDirSync(__config.download.path).then(files => {
+        await utils.readDirSync(__config.download.path).then(files => {
             for (const file of files) {
                 const search = /^\(([0-9]+)\)/.exec(file);
                 if (search) {
@@ -518,8 +518,8 @@ class PixivFunc {
      * @returns 工具
      * @memberof PixivFunc
      */
-    static tools() {
-        return require('./tools');
+    static utils() {
+        return require('./utils');
     }
 
     /**

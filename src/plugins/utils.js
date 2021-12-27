@@ -1,18 +1,33 @@
-const Fs = require('fs');
-const Fse = require('fs-extra');
+const getLatestVersion = require('latest-version');
+const compareVersions = require('compare-versions');
+
+const fs = require('fs');
+const fse = require('fs-extra');
 const Readline = require('readline');
 const Axios = require('axios');
 const Path = require('path');
 const fetch = require("node-fetch");
-const Illustrator = require('./illustrator');
-const Pixiv = require('./pxrepo');
+
+
 const pxrepodir = Path.resolve(__dirname, '..');
 const configFileDir = Path.join(pxrepodir, 'config');
+const checkLogFile = Path.join(pxrepodir, 'update.json');
+const { name, version } = Path.join(pxrepodir, 'package.json');
+
+
 const downJson = Path.join(configFileDir, 'download.json');
 const historyJson = Path.join(configFileDir, 'history.json');
+
 const https = require("https");
 const StreamZip = require('node-stream-zip');
 
+function readJsonSafely(path, defaultValue) {
+    if (!fse.existsSync(path)) return defaultValue;
+    try {
+        return fse.readJsonSync(path);
+    } catch (error) {}
+    return defaultValue;
+}
 /**
  * 读取目录下的内容
  *
@@ -21,7 +36,7 @@ const StreamZip = require('node-stream-zip');
  */
 function readDirSync(dirpath) {
     return new Promise((resolve, reject) => {
-        Fs.readdir(dirpath, (e, files) => {
+        fs.readdir(dirpath, (e, files) => {
             if (e) reject(e);
             else resolve(files);
         });
@@ -53,14 +68,14 @@ function clearProgress(interval) {
  */
 async function download(dirpath, filename, url, axiosOption, errorTimeout) {
     console.time(filename)
-    Fse.ensureDirSync(dirpath);
+    fse.ensureDirSync(dirpath);
     axiosOption.responseType = 'stream';
 
     const response = await Axios.create(axiosOption).get(global.cf ? url.replace('i.pximg.net', 'i-cf.pximg.net') : url.replace('i-cf.pximg.net', 'i.pximg.net'));
     const data = response.data;
 
     return new Promise((reslove, reject) => {
-        data.pipe(Fse.createWriteStream(Path.join(dirpath, filename)));
+        data.pipe(fse.createWriteStream(Path.join(dirpath, filename)));
         data.on('end', () => {
             console.timeEnd(filename)
             reslove(response);
@@ -78,11 +93,11 @@ async function download(dirpath, filename, url, axiosOption, errorTimeout) {
 function mkdirsSync(dirpath) {
     let parentDir = Path.dirname(dirpath);
     //如果目标文件夹不存在但是上级文件夹存在
-    if (!Fs.existsSync(dirpath) && Fs.existsSync(parentDir)) {
-        Fs.mkdirSync(dirpath);
+    if (!fs.existsSync(dirpath) && fs.existsSync(parentDir)) {
+        fs.mkdirSync(dirpath);
     } else {
         mkdirsSync(parentDir);
-        Fs.mkdirSync(dirpath);
+        fs.mkdirSync(dirpath);
     }
 }
 
@@ -129,21 +144,14 @@ function CheckExist(follows, uid, FileJson, illustrator_name, remark) {
                     id: parseInt(uid),
                 });
             }
-            Fs.writeFileSync(FileJson, JSON.stringify(follows));
+            fs.writeFileSync(FileJson, JSON.stringify(follows));
         }
-        //else console.log('不写入');
         return false;
     } else return true;
 }
 
 
-function readJsonSafely(path, defaultValue) {
-    if (!Fse.existsSync(path)) return defaultValue;
-    try {
-        return Fse.readJsonSync(path);
-    } catch (error) {}
-    return defaultValue;
-}
+
 
 function sleep(ms) {
     return new Promise(resolve => {

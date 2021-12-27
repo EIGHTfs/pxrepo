@@ -6,7 +6,7 @@ const Fse = require('fs-extra');
 //const md5 = require('md5');
 
 const Path = require("path");
-const Tools = require('./tools');
+const utils = require('./plugins/utils');
 const pxrepodir = Path.resolve(__dirname, '..');
 const configFileDir = Path.join(pxrepodir, 'config');
 const downJson = Path.join(configFileDir, 'download.json');
@@ -54,13 +54,13 @@ async function downloadByIllustrators(illustrators, callback) {
         console.log("\nCollecting illusts of " + (parseInt(i) + 1).toString().green + "/" + illustrators.length + " uid ".gray + illustrator.id.toString().cyan + " " + illustrator.name.yellow);
 
         illustrator_id = illustrator.id;
-        if (Tools.CheckExist(blacklist, illustrator_id)) {
+        if (utils.CheckExist(blacklist, illustrator_id)) {
             console.log('黑名单：\t (' + illustrator_id + ')');
             continue;
         }
         let historys = require(historyJson)
 
-        Tools.CheckExist(historys, illustrator.id.toString(), historyJson, illustrator.name)
+        utils.CheckExist(historys, illustrator.id.toString(), historyJson, illustrator.name)
         complete = Path.join(tempdir, illustrator.id.toString());
         console.log(complete);
 
@@ -70,7 +70,7 @@ async function downloadByIllustrators(illustrators, callback) {
         //下载
         await downloadIllusts(info.illusts, Path.join(config.path, info.dir), config.thread);
         ////防止突破30次/min的限制
-        //await Tools.sleep(2000);
+        //await utils.sleep(2000);
         //回调
         if (typeof(callback) == 'function') callback(i);
 
@@ -115,7 +115,7 @@ async function getDownloadListByIllustrator(illustrator) {
         });
     }
     isonline();
-    await Tools.sleep(1000);
+    await utils.sleep(1000);
 
     //最新画作检查
     let exampleIllusts = illustrator.exampleIllusts;
@@ -137,7 +137,7 @@ async function getDownloadListByIllustrator(illustrator) {
     //得到未下载的画作
     illusts = [];
     let cnt;
-    let processDisplay = Tools.showProgress(() => illusts.length);
+    let processDisplay = utils.showProgress(() => illusts.length);
     do {
         cnt = 0;
         let temps = await illustrator.illusts();
@@ -151,11 +151,11 @@ async function getDownloadListByIllustrator(illustrator) {
         if ((illusts.length % 300) >= 200 && (illusts.length % 300) <= 299) {
             console.log('\n防止Rate Limit,暂停15秒');
             //防止突破30次/min的限制
-            await Tools.sleep(1000 * 15);
+            await utils.sleep(1000 * 15);
         }
 
     } while (illustrator.hasNext('illust') && cnt > 0 && illusts.length < 4500);
-    Tools.clearProgress(processDisplay);
+    utils.clearProgress(processDisplay);
 
     return {
         dir,
@@ -181,7 +181,7 @@ async function downloadByBookmark(me, isPrivate = false) {
     //得到未下载的画作
     let illusts = [];
 
-    let processDisplay = Tools.showProgress(() => illusts.length);
+    let processDisplay = utils.showProgress(() => illusts.length);
 
     let cnt;
     do {
@@ -195,7 +195,7 @@ async function downloadByBookmark(me, isPrivate = false) {
         }
     } while (me.hasNext('bookmark') && cnt > 0);
 
-    Tools.clearProgress(processDisplay);
+    utils.clearProgress(processDisplay);
 
     //下载
     await downloadIllusts(illusts.reverse(), Path.join(config.path, dir), config.thread);
@@ -243,7 +243,7 @@ function downloadIllusts(illusts, dldir, configThread) {
                 //开始下载
 
                 console.log(`[${threadID + 1}]   \t${(parseInt(i) + 1).toString().green}/${illusts.length}    \t${"pid".gray}  ${illust.id.toString().cyan}   \t${illust.title.yellow}`);
-                //const processDisplay = Tools.showProgress(() => `  [${threadID +1}]`);
+                //const processDisplay = utils.showProgress(() => `  [${threadID +1}]`);
 
                 //console.log(downthread);
 
@@ -261,28 +261,28 @@ function downloadIllusts(illusts, dldir, configThread) {
                     }
                     if (pause) {
                         times = 1;
-                        await Tools.sleep(hangup);
+                        await utils.sleep(hangup);
                         pause = false;
                     }
                     //失败重试				
                     var tempDir = complete;
-                    return Tools.download(tempDir, illust.file, illust.url, options, errorTimeout).then(async res => {
+                    return utils.download(tempDir, illust.file, illust.url, options, errorTimeout).then(async res => {
                             //文件完整性校验
                             let fileSize = res.headers['content-length'];
                             let dlfile = Path.join(tempDir, illust.file);
 
 
 
-                            for (let i = 0; i < 10 && !Fs.existsSync(dlfile); i++) await Tools.sleep(200); ////
+                            for (let i = 0; i < 10 && !Fs.existsSync(dlfile); i++) await utils.sleep(200); ////
 
-                            await Tools.sleep(500);
+                            await utils.sleep(500);
                             dlFileSize = Fs.statSync(dlfile).size;
 
 
 
                             if (!fileSize || dlFileSize == fileSize) //根据文件大小判断下载是否成功
                             {
-                                //Tools.clearProgress(processDisplay);
+                                //utils.clearProgress(processDisplay);
 
                                 Fse.moveSync(dlfile, Path.join(dldir, illust.file)); //从缓存目录到下载目录
 
@@ -339,11 +339,11 @@ function downloadIllusts(illusts, dldir, configThread) {
 async function getIllustratorNewDir(data) {
     //下载目录
     let mainDir = config.path;
-    if (!Fs.existsSync(mainDir)) Tools.mkdirsSync(mainDir);
+    if (!Fs.existsSync(mainDir)) utils.mkdirsSync(mainDir);
     let dldir = null;
 
     //先搜寻已有目录
-    await Tools.readDirSync(mainDir).then(files => {
+    await utils.readDirSync(mainDir).then(files => {
         for (let file of files) {
             if (file.indexOf('(' + data.id + ')') === 0) {
                 dldir = file;
@@ -369,7 +369,7 @@ async function getIllustratorNewDir(data) {
             let fdir = Path.join(mainDir, dldir);
             let Fdir = Path.join(mainDir, dldirNew);
 
-            await Tools.readDirSync(fdir).then(files => {
+            await utils.readDirSync(fdir).then(files => {
                 for (let file of files) {
                     Fse.moveSync(Path.join(fdir, file), Path.join(Fdir, file), { overwrite: true })
                 }
@@ -404,7 +404,7 @@ async function downloadByIllusts(illustJSON) {
     }
     await downloadIllusts(illusts, Path.join(config.path, 'PID'), config.thread);
     ////防止突破30次/min的限制
-    //await Tools.sleep(2000);
+    //await utils.sleep(2000);
 }
 
 
