@@ -83,6 +83,7 @@ function callApi(url, options, retry = 2) {
                     follows = require(global.Json)
                     follows.shift()
                     await Fs.writeFileSync(global.Json, JSON.stringify(follows))
+                    url = null
                     return callApi(url, options)
                 } else if (JSON.stringify(msg).search('Rate Limit') != -1) {
                     console.error('Rate limit ,暂停一小会.'.gray)

@@ -34,6 +34,7 @@ global.tempdir = Path.join(global.pxrepodir, 'temp')
 
 global.downJson = Path.join(global.configFileDir, 'download.json') //下载任务
 global.blacklistJson = Path.join(global.configFileDir, 'blacklist.json') //黑名单
+let blacklistJson = Path.join(global.configFileDir, 'blacklist.json') //黑名单
 global.historyJson = Path.join(global.configFileDir, 'history.json') //历史下载
 global.configFile = Path.join(global.configFileDir, 'config.json')
 
@@ -90,12 +91,8 @@ handleArgv()
         }
         Pixiv.applyConfig(config)
 
-        if (!Fs.existsSync(global.blacklistJson)) //如果不存在blacklistJson则创建
-        {
 
-            Fs.writeFileSync(global.blacklistJson, '[{\"id\":' + parseInt(11) + '}]')
 
-        }
 
         //检查更新
         const updater = new UpdateChecker()

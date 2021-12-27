@@ -36,6 +36,7 @@ class PixivFunc {
                     autoRename: true,
                 },
             })
+
     }
 
     /**
@@ -461,47 +462,53 @@ class PixivFunc {
         })
 
 
+        if (!Fs.existsSync(global.blacklistJson)) //如果不存在blacklistJson则创建
+        {
 
-        if (!Fs.existsSync(downJson)) //如果不存在downJson则创建
+            Fs.writeFileSync(global.blacklistJson, '[{\"id\":' + parseInt(11) + '}]')
+
+        }
+        if (!Fs.existsSync(global.downJson)) //如果不存在downJson则创建
         {
             uids.forEach(uid => follows.push({
                 id: parseInt(uid),
 
             }))
-            Fs.writeFileSync(downJson, JSON.stringify(follows))
+            Fs.writeFileSync(global.downJson, JSON.stringify(follows))
+            this.downloadUpdate(Json)
+        } else {
+            follows = require(Json)
+                //////////////////////////	
+            if (!Fs.existsSync(global.historyJson)) //如果不存在historyJson则创建
+            {
 
-        }
-        follows = require(Json)
-            //////////////////////////	
-        if (!Fs.existsSync(historyJson)) //如果不存在historyJson则创建
-        {
+                Fs.writeFileSync(global.historyJson, JSON.stringify(follows))
 
-            Fs.writeFileSync(historyJson, JSON.stringify(follows))
-
-        }
-
-        if (!illustrators) {
-            illustrators = []
-            for (const follow of follows) {
-
-
-                illustrators.push(new Illustrator(follow.id, follow.name))
             }
+
+            if (!illustrators) {
+                illustrators = []
+                for (const follow of follows) {
+
+
+                    illustrators.push(new Illustrator(follow.id, follow.name))
+                }
+            }
+
+            //开始下载
+            await Downloader.downloadByIllustrators(illustrators, () => {
+
+                //	console.log(
+                follows.shift()
+                    //	)
+
+
+
+                Fs.writeFileSync(Json, JSON.stringify(follows))
+            })
+            if (Json != global.blacklistJson)
+                Fs.unlinkSync(Json)
         }
-
-        //开始下载
-        await Downloader.downloadByIllustrators(illustrators, () => {
-
-            //	console.log(
-            follows.shift()
-                //	)
-
-
-
-            Fs.writeFileSync(Json, JSON.stringify(follows))
-        })
-        if (Json != global.blacklistJson)
-            Fs.unlinkSync(Json)
 
 
     }
