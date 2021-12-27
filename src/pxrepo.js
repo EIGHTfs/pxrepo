@@ -5,16 +5,8 @@ const Illustrator = require('./illustrator');
 const Fs = require('fs');
 const Fse = require('fs-extra');
 const Path = require('path');
-const utils = require('./plugins/utils');
-const readline = require('readline-sync');
+const utils = require('./plugins/utils')
 const { getProxyAgent, getSysProxy } = require('./proxy');
-const pxrepodir = Path.resolve(__dirname, '..');
-const configFileDir = Path.join(pxrepodir, 'config');
-const configFile = Path.join(configFileDir, 'config.json');
-const downJson = Path.join(configFileDir, 'download.json');
-const historyJson = Path.join(configFileDir, 'history.json');
-const blacklistJson = Path.join(configFileDir, 'blacklist.json');
-let blacklist = [];
 let __config;
 const { Agent } = require('https');
 
@@ -31,9 +23,9 @@ class PixivFunc {
      * @memberof PixivFunc
      */
     static initConfig(forceInit = false) {
-        if (!Fs.existsSync(configFileDir)) Fs.mkdirSync(configFileDir);
-        if (!Fs.existsSync(configFile) || forceInit)
-            Fse.writeJSONSync(configFile, {
+        if (!Fs.existsSync(global.configFileDir)) Fs.mkdirSync(global.configFileDir);
+        if (!Fs.existsSync(global.configFile) || forceInit)
+            Fse.writeJSONSync(global.configFile, {
                 download: {
                     thread: 32,
                     autoRename: true,
@@ -238,7 +230,7 @@ class PixivFunc {
             var offset = '';
             for (const preview of data.user_previews) {
 
-                if (utils.CheckExist(blacklist, preview.user.id)) {
+                if (utils.CheckExist(global.blacklist, preview.user.id)) {
                     console.log('黑名单：\t (' + preview.user.id + ')');
                     continue;
                 } else {
@@ -253,7 +245,7 @@ class PixivFunc {
 
 
                     dir_Illustrator = Path.join(__config.download.path, '(' + preview.user.id + ')' + iName);
-                    if (utils.CheckExist(blacklist, preview.user.id))
+                    if (utils.CheckExist(global.blacklist, preview.user.id))
                         if (!Fs.existsSync(dir_Illustrator))
                             Fs.mkdirSync(dir_Illustrator);
 
@@ -352,8 +344,8 @@ class PixivFunc {
         const uidArray = Array.isArray(uids) ? uids : [uids];
         for (const uid of uidArray) {
             //判断作品是否在黑名单
-            blacklist = require(blacklistJson)
-            if (utils.CheckExist(blacklist, uid)) {
+            blacklist = require(global.blacklistJson)
+            if (utils.CheckExist(global.blacklist, uid)) {
                 console.log('黑名单：\t (' + uid + ')');
                 continue;
             } else {
@@ -395,7 +387,7 @@ class PixivFunc {
 
         //取得关注列表
 
-        if (!Fs.existsSync(downJson)) {
+        if (!Fs.existsSync(global.downJson)) {
             console.log('\nCollecting your follows');
 
 
@@ -421,7 +413,7 @@ class PixivFunc {
 
 
 
-        } else follows = require(downJson);
+        } else follows = require(global.downJson);
 
         //数据恢复
         if (!illustrators) {
@@ -440,7 +432,7 @@ class PixivFunc {
         });
 
         //清除临时文件
-        Fs.unlinkSync(downJson);
+        Fs.unlinkSync(global.downJson);
     }
 
     /**
@@ -505,7 +497,7 @@ class PixivFunc {
 
             Fs.writeFileSync(Json, JSON.stringify(follows));
         })
-        if (Json != blacklistJson)
+        if (Json != global.blacklistJson)
             Fs.unlinkSync(Json)
 
 

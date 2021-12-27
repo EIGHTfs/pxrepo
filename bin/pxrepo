@@ -6,21 +6,15 @@ require('colors');
 const Pixiv = require('../src/pxrepo');
 const pixivLogin = require('../src/pixiv-login');
 const utils = require('../src/plugins/utils');
-const Downloader = require('../src/downloader');
-const Illustrator = require('../src/illustrator');
 const pkg = require('../package.json');
 const Fse = require('fs-extra');
 const Fs = require('fs');
 const program = require('commander');
 const readlinesync = require('readline-sync');
 const Path = require('path');
-const pxrepodir = Path.resolve(__dirname, '..'); //pxrepo根目录
-const tempdir = Path.join(pxrepodir, 'temp'); //下载路径
-const configFileDir = Path.join(pxrepodir, 'config'); //设置路径
+
 const { checkProxy, getSysProxy } = require('../src/proxy');
-const downJson = Path.join(configFileDir, 'download.json'); //下载任务
-const blacklistJson = Path.join(configFileDir, 'blacklist.json'); //黑名单
-const historyJson = Path.join(configFileDir, 'history.json'); //历史下载
+
 const UpdateChecker = require('../src/updateChecker');
 
 const LoginProtocol = require('../src/protocol');
@@ -29,7 +23,17 @@ const receiveLoginCode = require('../src/protocol/receiver');
 const prompts = require('prompts');
 const open = require('open');
 
+global.pxrepodir = Path.resolve(__dirname, '..'); //pxrepo根目录
+global.tempdir = Path.join(global.pxrepodir, 'temp'); //下载路径
+global.configFileDir = Path.join(global.pxrepodir, 'config'); //设置路径
+global.tempdir = Path.join(global.pxrepodir, 'temp');
 
+global.downJson = Path.join(global.configFileDir, 'download.json'); //下载任务
+global.blacklistJson = Path.join(global.configFileDir, 'blacklist.json'); //黑名单
+global.historyJson = Path.join(global.configFileDir, 'history.json'); //历史下载
+global.configFile = Path.join(global.configFileDir, 'config.json')
+
+global.blacklist = require(global.blacklistJson);
 
 /*
  * Usage
@@ -125,13 +129,13 @@ handleArgv()
             if (typeof Json == 'string') {
                 switch (Json) {
                     case 'downJson':
-                        await pixiv.downloadUpdate(downJson)
+                        await pixiv.downloadUpdate(global.downJson)
                         break;
                     case 'historyJson':
-                        await pixiv.downloadUpdate(historyJson)
+                        await pixiv.downloadUpdate(global.historyJson)
                         break;
                     case 'blacklistJson':
-                        await pixiv.downloadUpdate(blacklistJson)
+                        await pixiv.downloadUpdate(global.blacklistJson)
                         break;
                     default:
                         await pixiv.downloadUpdate(Json)

@@ -1,25 +1,9 @@
-const getLatestVersion = require('latest-version');
-const compareVersions = require('compare-versions');
-
 const fs = require('fs');
 const fse = require('fs-extra');
 const Readline = require('readline');
 const Axios = require('axios');
 const Path = require('path');
-const fetch = require("node-fetch");
 
-
-const pxrepodir = Path.resolve(__dirname, '..');
-const configFileDir = Path.join(pxrepodir, 'config');
-const checkLogFile = Path.join(pxrepodir, 'update.json');
-const { name, version } = Path.join(pxrepodir, 'package.json');
-
-
-const downJson = Path.join(configFileDir, 'download.json');
-const historyJson = Path.join(configFileDir, 'history.json');
-
-const https = require("https");
-const StreamZip = require('node-stream-zip');
 
 function readJsonSafely(path, defaultValue) {
     if (!fse.existsSync(path)) return defaultValue;

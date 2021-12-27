@@ -6,20 +6,14 @@ const Fse = require('fs-extra');
 //const md5 = require('md5');
 
 const Path = require("path");
-const utils = require('./plugins/utils');
-const pxrepodir = Path.resolve(__dirname, '..');
-const configFileDir = Path.join(pxrepodir, 'config');
-const downJson = Path.join(configFileDir, 'download.json');
-const historyJson = Path.join(configFileDir, 'history.json');
-const blacklistJson = Path.join(configFileDir, 'blacklist.json');
+const utils = require('./plugins/utils')
 const pixivRefer = 'https://www.pixiv.net/';
 let downthread = 0;
 let dlFileSize;
 let complete;
 let config;
 let Network = 0;
-const tempdir = Path.join(pxrepodir, 'temp');
-let blacklist = require(blacklistJson);
+
 
 let httpsAgent = false;
 
@@ -54,7 +48,7 @@ async function downloadByIllustrators(illustrators, callback) {
         console.log("\nCollecting illusts of " + (parseInt(i) + 1).toString().green + "/" + illustrators.length + " uid ".gray + illustrator.id.toString().cyan + " " + illustrator.name.yellow);
 
         illustrator_id = illustrator.id;
-        if (utils.CheckExist(blacklist, illustrator_id)) {
+        if (utils.CheckExist(global.blacklist, illustrator_id)) {
             console.log('黑名单：\t (' + illustrator_id + ')');
             continue;
         }
