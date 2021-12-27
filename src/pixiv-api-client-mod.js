@@ -33,7 +33,7 @@ const Readline = require('readline')
 const moment = require('moment')
 const logError = require('./logError')
 const utils = require('./plugins/utils')
-
+const Fs = require('fs')
 const BASE_URL = 'https://app-api.pixiv.net'
 const CLIENT_ID = 'MOBrBDS8blbauoSck0ZfDbtuzpyT'
 const CLIENT_SECRET = 'lsACyCD94FhDUtGTXi3QzcFE2uU1hqtDaKeqrdwj'
@@ -73,21 +73,26 @@ function callApi(url, options, retry = 2) {
                 if (JSON.stringify(msg).search('Your access is currently restricted.') != -1 ||
                     JSON.stringify(msg).search('Work has been deleted or the ID does not exist.') != -1) {
                     console.error(JSON.stringify(msg).red)
+                    let uid = url.substring(url.lastIndexOf("user_id=") + 8, url.length)
+                    console.log(uid.red)
+                    global.blacklist = require(global.blacklistJson)
+                    if (!utils.checkExist(global.blacklist, uid, global.blacklistJson)) {
+                        console.log('将 \t (' + uid + ') \t 添加到了黑名单')
+                        utils.showExists(global.blacklistJson)
+                    }
                     follows = require(global.Json)
                     follows.shift()
-                    await fs.writeFileSync(global.Json, JSON.stringify(follows))
+                    await Fs.writeFileSync(global.Json, JSON.stringify(follows))
                     return callApi(url, options)
                 } else if (JSON.stringify(msg).search('Rate Limit') != -1) {
                     console.error('Rate limit ,暂停一小会.'.gray)
                     await sleep(1000 * 30)
                 } else throw msg
-            } else {
-                if (retry <= 0) throw err.message
-                console.error('RETRY'.yellow, url)
-                console.error(err.message)
-                await sleep(1000)
-                return callApi(url, options, retry - 1)
-            }
+                return callApi(url, options)
+            } else if (JSON.stringify(msg).search('Rate Limit') != -1) {
+                console.error('Rate limit ,暂停一小会.'.gray)
+                await sleep(1000 * 30)
+            } else { throw msg }
         })
 }
 

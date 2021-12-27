@@ -148,7 +148,7 @@ handleArgv()
                         if (Fs.existsSync(Json))
                             await pixiv.downloadUpdate(Json)
                 }
-            } else await pixiv.downloadUpdate(downJson)
+            } else await pixiv.downloadUpdate(global.downJson)
 
         }
 
