@@ -32,6 +32,7 @@ const md5 = require('blueimp-md5')
 const Readline = require('readline')
 const moment = require('moment')
 const logError = require('./logError')
+const utils = require('./plugins/utils')
 
 const BASE_URL = 'https://app-api.pixiv.net'
 const CLIENT_ID = 'MOBrBDS8blbauoSck0ZfDbtuzpyT'
@@ -65,14 +66,20 @@ function callApi(url, options, retry = 2) {
                 Readline.clearLine(process.stdout, 0)
                 Readline.cursorTo(process.stdout, 0)
                 console.error('Connection reset detected.'.gray)
-                await sleep(3 * 1000)
+                await sleep(1000 * 5)
                 return callApi(url, options)
             } else if (err.response && err.response.data) {
                 const msg = err.response.data
-                if (/rate limit/i.test(msg)) {
-                    console.error('Rate limit detected. Pause for 10 minutes.'.gray)
-                    await sleep(10 * 60 * 1000)
+                if (JSON.stringify(msg).search('Your access is currently restricted.') != -1 ||
+                    JSON.stringify(msg).search('Work has been deleted or the ID does not exist.') != -1) {
+                    console.error(JSON.stringify(msg).red)
+                    follows = require(global.Json)
+                    follows.shift()
+                    await fs.writeFileSync(global.Json, JSON.stringify(follows))
                     return callApi(url, options)
+                } else if (JSON.stringify(msg).search('limit') != -1) {
+                    console.error('Rate limit ,暂停一小会.'.gray)
+                    await sleep(1000 * 30)
                 } else throw msg
             } else {
                 if (retry <= 0) throw err.message

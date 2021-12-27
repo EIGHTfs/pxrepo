@@ -5,6 +5,7 @@
 require('colors')
 const Pixiv = require('../src/pxrepo')
 const pixivLogin = require('../src/pixiv-login')
+const PixivApi = require('../src/pixiv-api-client-mod')
 const utils = require('../src/plugins/utils')
 const pkg = require('../package.json')
 const Fse = require('fs-extra')
@@ -37,6 +38,9 @@ global.historyJson = Path.join(global.configFileDir, 'history.json') //历史下
 global.configFile = Path.join(global.configFileDir, 'config.json')
 
 global.blacklist = require(global.blacklistJson)
+
+global.pixiv = new PixivApi()
+
 
 /*
  * Usage
@@ -86,10 +90,10 @@ handleArgv()
         }
         Pixiv.applyConfig(config)
 
-        if (!Fs.existsSync(blacklistJson)) //如果不存在blacklistJson则创建
+        if (!Fs.existsSync(global.blacklistJson)) //如果不存在blacklistJson则创建
         {
 
-            Fs.writeFileSync(blacklistJson, '[{\"id\":' + parseInt(11) + '}]')
+            Fs.writeFileSync(global.blacklistJson, '[{\"id\":' + parseInt(11) + '}]')
 
         }
 
@@ -138,7 +142,7 @@ handleArgv()
                         await pixiv.downloadUpdate(global.historyJson)
                         break
                     case 'blacklistJson':
-                        await pixiv.downloadUpdate(global.blacklistJson)
+                        utils.showExists(global.blacklistJson)
                         break
                     default:
                         if (Fs.existsSync(Json))

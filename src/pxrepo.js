@@ -235,7 +235,7 @@ class PixivFunc {
             var offset = ''
             for (const preview of data.user_previews) {
 
-                if (utils.CheckExist(global.blacklist, preview.user.id)) {
+                if (utils.checkExist(global.blacklist, preview.user.id)) {
                     console.log('黑名单：\t (' + preview.user.id + ')')
                     continue
                 } else {
@@ -250,7 +250,7 @@ class PixivFunc {
 
 
                     dir_Illustrator = Path.join(__config.download.path, '(' + preview.user.id + ')' + iName)
-                    if (utils.CheckExist(global.blacklist, preview.user.id))
+                    if (utils.checkExist(global.blacklist, preview.user.id))
                         if (!Fs.existsSync(dir_Illustrator))
                             Fs.mkdirSync(dir_Illustrator)
 
@@ -350,7 +350,7 @@ class PixivFunc {
         for (const uid of uidArray) {
             //判断作品是否在黑名单
             blacklist = require(global.blacklistJson)
-            if (utils.CheckExist(global.blacklist, uid)) {
+            if (utils.checkExist(global.blacklist, uid)) {
                 console.log('黑名单：\t (' + uid + ')')
                 continue
             } else {
@@ -447,10 +447,9 @@ class PixivFunc {
     async downloadUpdate(Json) {
         const uids = []
         let follows = []
-        let historys = []
         let illustrators = null
-            //得到文件夹内所有UID
 
+        global.Json = Json
 
         await utils.readDirSync(__config.download.path).then(files => {
             for (const file of files) {

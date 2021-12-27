@@ -63,9 +63,8 @@ async function downloadByIllustrators(illustrators, callback) {
         await illustrator.info().then(getIllustratorNewDir)
             //下载
         await downloadIllusts(info.illusts, Path.join(config.path, info.dir), config.thread)
-            ////防止突破30次/min的限制
-            //await utils.sleep(2000);
-            //回调
+
+        //回调
         if (typeof(callback) == 'function') callback(i)
 
         Fse.removeSync(complete)
@@ -142,11 +141,7 @@ async function getDownloadListByIllustrator(illustrator) {
             }
         }
 
-        if ((illusts.length % 300) >= 200 && (illusts.length % 300) <= 299) {
-            console.log('\n防止Rate Limit,暂停15秒')
-                //防止突破30次/min的限制
-            await utils.sleep(1000 * 15)
-        }
+
 
     } while (illustrator.hasNext('illust') && cnt > 0 && illusts.length < 4500)
     utils.clearProgress(processDisplay)
