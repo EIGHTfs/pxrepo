@@ -4,8 +4,6 @@
 
 ### \*此项目的源码来自 GitHub 上的开源项目:[Tsuk1ko/pxder](https://github.com/Tsuk1ko/pxder)，为了针对个人体验时的想法进行了修改（因为我没学过nodejs,所以改得贼烂,依葫芦画瓢(复制粘贴)试出来的,专业不对口）
 
-![avatar](http://www.deathggunod.space/img/pxrepo/pxrepo.jpg)
-
 
 ## 准备
 
@@ -37,6 +35,11 @@ pxrepo --logout
 
 ## 对 pxder 的修改
 
+`pxrepo -f`
+`pxrepo -F`
+
+#### 仅获取写入到`download.json`
+
 `pxrepo -U`
 
 #### `download.json`不存在，读取所有下载的画师(通过画师对应的文件夹),写入到`download.json`然后进行更新，`download.json`存在即为下载功能，追加参数指定json文件下载，可以通过指定不同json文件多开
@@ -44,7 +47,7 @@ pxrepo --logout
 `pxrepo -U downJson`
 `pxrepo -U historyJson`
 
-#### 任意路径下的json文件 
+#### 任意路径下的json文件，请确保文件存在 
 `pxrepo -U Z:\pxrepo\config\download.json`
 
 `pxrepo --setting`
@@ -56,7 +59,11 @@ pxrepo --logout
 
 #### 缓存目录和程序目录位于同一个文件夹下，下载会在缓存目录下再创建格式为"(" + id + ")"的文件夹。不再是直接都放在整个缓存目录，运行时不会删掉缓存目录 (`pxrepo -D`可以删除缓存目录里面所有文件)
 
-#### 可以一直下载不会卡住了(但如果获取的时候卡住了，那就是真的卡住了)
+#### 可以一直下载不会卡住了，包括出现以下异常时仍能继续(但如果获取的时候卡住了，那就是真的卡住了)
+`Rate Limit` 
+`Your access is currently restricted.`
+`Work has been deleted or the ID does not exist.`
+
 
 #### 增加"黑名单"功能手动`pxrepo -l`添加画师 ID 拉入"黑名单"，每次下载前都会检查欲下载的画师的 ID 是否存在于`blacklist.json`，存在就跳过。默认值`[{"id":11}]`,之所以搞这个是因为有些画师号没了;已经下载了保留了自己要的插图，不想再下载他其他的插图了;或者是下面这种情况，基本也可以"拉黑"了，这种好像是画师不让你下载了？，所谓的"拉黑"只是每次都跳过下载，并不是真的pixiv拉黑
 ```bash
@@ -69,10 +76,6 @@ pxrepo --logout
   }
 }
 ```
-
-
-#### 为防止 Rate Limit 出现。(不知道限制是多少，反正应该很少出现这种情况了，除非一边下载一遍刷p站？)会自动暂停 15s
-
 
 ### \*删除缓存目录下所有文件
 
