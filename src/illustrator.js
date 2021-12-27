@@ -1,6 +1,6 @@
-const Illust = require('./illust');
+const Illust = require('./illust')
 
-let pixiv;
+let pixiv
 
 /**
  * 画师
@@ -15,23 +15,23 @@ class Illustrator {
      * @memberof Illustrator
      */
     constructor(uid, uname = '') {
-        this.id = uid;
-        this.name = uname;
+        this.id = uid
+        this.name = uname
         this.next = {
             illust: null,
             bookmark: null,
-        };
+        }
     }
 
     async setExampleIllusts(illustsJSON) {
-        this.exampleIllusts = [];
+        this.exampleIllusts = []
         for (let illustJSON of illustsJSON) {
-            this.exampleIllusts = this.exampleIllusts.concat(await Illust.getIllusts(illustJSON));
+            this.exampleIllusts = this.exampleIllusts.concat(await Illust.getIllusts(illustJSON))
         }
     }
 
     static setPixiv(p) {
-        pixiv = p;
+        pixiv = p
     }
 
     /**
@@ -41,17 +41,17 @@ class Illustrator {
      * @memberof Illustrator
      */
     async info() {
-        let userData;
+        let userData
         if (this.name.length > 0) {
             userData = {
                 id: this.id,
                 name: this.name,
-            };
+            }
         } else {
-            userData = await pixiv.userDetail(this.id).then(ret => ret.user);
-            this.name = userData.name;
+            userData = await pixiv.userDetail(this.id).then(ret => ret.user)
+            this.name = userData.name
         }
-        return userData;
+        return userData
     }
 
     /**
@@ -63,27 +63,27 @@ class Illustrator {
      * @memberof Illustrator
      */
     async getSomeIllusts(type, option = null) {
-        let result = [];
-        let json = {};
+        let result = []
+        let json = {}
 
         //请求
-        if (this.next[type]) json = await pixiv.requestUrl(this.next[type]);
+        if (this.next[type]) json = await pixiv.requestUrl(this.next[type])
         else {
-            if (type == 'illust') json = await pixiv.userIllusts(this.id);
+            if (type == 'illust') json = await pixiv.userIllusts(this.id)
             else if (type == 'bookmark') {
-                if (option) json = await pixiv.userBookmarksIllust(this.id, option);
-                else json = await pixiv.userBookmarksIllust(this.id);
+                if (option) json = await pixiv.userBookmarksIllust(this.id, option)
+                else json = await pixiv.userBookmarksIllust(this.id)
             }
         }
 
         //数据整合
         for (let illust of json.illusts) {
-            result = result.concat(await Illust.getIllusts(illust));
+            result = result.concat(await Illust.getIllusts(illust))
         }
 
-        this.next[type] = json.next_url;
+        this.next[type] = json.next_url
 
-        return result;
+        return result
     }
 
     /**
@@ -93,7 +93,7 @@ class Illustrator {
      * @memberof Illustrator
      */
     illusts() {
-        return this.getSomeIllusts('illust');
+        return this.getSomeIllusts('illust')
     }
 
     /**
@@ -106,7 +106,7 @@ class Illustrator {
     bookmarks(isPrivate = false) {
         return this.getSomeIllusts('bookmark', {
             restrict: isPrivate ? 'private' : 'public',
-        });
+        })
     }
 
     /**
@@ -116,8 +116,8 @@ class Illustrator {
      * @memberof Illustrator
      */
     hasNext(nextName) {
-        return this.next[nextName] ? true : false;
+        return this.next[nextName] ? true : false
     }
 }
 
-module.exports = Illustrator;
+module.exports = Illustrator

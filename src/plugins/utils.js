@@ -1,16 +1,16 @@
-const fs = require('fs');
-const fse = require('fs-extra');
-const Readline = require('readline');
-const Axios = require('axios');
-const Path = require('path');
+const fs = require('fs')
+const fse = require('fs-extra')
+const Readline = require('readline')
+const Axios = require('axios')
+const Path = require('path')
 
 
 function readJsonSafely(path, defaultValue) {
-    if (!fse.existsSync(path)) return defaultValue;
+    if (!fse.existsSync(path)) return defaultValue
     try {
-        return fse.readJsonSync(path);
+        return fse.readJsonSync(path)
     } catch (error) {}
-    return defaultValue;
+    return defaultValue
 }
 /**
  * 读取目录下的内容
@@ -21,24 +21,24 @@ function readJsonSafely(path, defaultValue) {
 function readDirSync(dirpath) {
     return new Promise((resolve, reject) => {
         fs.readdir(dirpath, (e, files) => {
-            if (e) reject(e);
-            else resolve(files);
-        });
-    });
+            if (e) reject(e)
+            else resolve(files)
+        })
+    })
 }
 
 function showProgress(valFn) {
     return setInterval(() => {
-        Readline.clearLine(process.stdout, 0);
-        Readline.cursorTo(process.stdout, 0);
-        process.stdout.write('Progress: ' + `${valFn()}`.green);
-    }, 500);
+        Readline.clearLine(process.stdout, 0)
+        Readline.cursorTo(process.stdout, 0)
+        process.stdout.write('Progress: ' + `${valFn()}`.green)
+    }, 500)
 }
 
 function clearProgress(interval) {
-    clearInterval(interval);
-    Readline.clearLine(process.stdout, 0);
-    Readline.cursorTo(process.stdout, 0);
+    clearInterval(interval)
+    Readline.clearLine(process.stdout, 0)
+    Readline.cursorTo(process.stdout, 0)
 }
 
 /**
@@ -52,36 +52,36 @@ function clearProgress(interval) {
  */
 async function download(dirpath, filename, url, axiosOption, errorTimeout) {
     console.time(filename)
-    fse.ensureDirSync(dirpath);
-    axiosOption.responseType = 'stream';
+    fse.ensureDirSync(dirpath)
+    axiosOption.responseType = 'stream'
 
-    const response = await Axios.create(axiosOption).get(global.cf ? url.replace('i.pximg.net', 'i-cf.pximg.net') : url.replace('i-cf.pximg.net', 'i.pximg.net'));
-    const data = response.data;
+    const response = await Axios.create(axiosOption).get(global.cf ? url.replace('i.pximg.net', 'i-cf.pximg.net') : url.replace('i-cf.pximg.net', 'i.pximg.net'))
+    const data = response.data
 
     return new Promise((reslove, reject) => {
-        data.pipe(fse.createWriteStream(Path.join(dirpath, filename)));
+        data.pipe(fse.createWriteStream(Path.join(dirpath, filename)))
         data.on('end', () => {
             console.timeEnd(filename)
-            reslove(response);
-        });
-        data.on('error', reject);
+            reslove(response)
+        })
+        data.on('error', reject)
         setTimeout(_ => {
             //console.warn(`Promise time out:${errorTimeout}`)
-            reject('Promise time out');
-        }, errorTimeout);
-    });
+            reject('Promise time out')
+        }, errorTimeout)
+    })
 }
 
 
 
 function mkdirsSync(dirpath) {
-    let parentDir = Path.dirname(dirpath);
-    //如果目标文件夹不存在但是上级文件夹存在
+    let parentDir = Path.dirname(dirpath)
+        //如果目标文件夹不存在但是上级文件夹存在
     if (!fs.existsSync(dirpath) && fs.existsSync(parentDir)) {
-        fs.mkdirSync(dirpath);
+        fs.mkdirSync(dirpath)
     } else {
-        mkdirsSync(parentDir);
-        fs.mkdirSync(dirpath);
+        mkdirsSync(parentDir)
+        fs.mkdirSync(dirpath)
     }
 }
 
@@ -114,22 +114,22 @@ function checkExist(items, uid, FileJson, illustrator_name, remark) {
                 console.log({
                     id: parseInt(uid),
                     name: illustrator_name,
-                });
+                })
                 items.push({
                     id: parseInt(uid),
                     name: illustrator_name,
-                });
+                })
 
             } else {
                 console.log({
                     id: parseInt(uid),
-                });
+                })
                 items.push({
                     id: parseInt(uid),
-                });
+                })
 
             }
-            fs.writeFileSync(FileJson, JSON.stringify(items));
+            fs.writeFileSync(FileJson, JSON.stringify(items))
         }
         return false
     } else return true
@@ -157,8 +157,8 @@ function deleteExist(uid, FileJson) {
 
 function sleep(ms) {
     return new Promise(resolve => {
-        setTimeout(resolve, ms);
-    });
+        setTimeout(resolve, ms)
+    })
 }
 
 
@@ -174,4 +174,4 @@ module.exports = {
     sleep,
     showExists,
     deleteExist
-};
+}
