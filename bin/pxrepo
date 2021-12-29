@@ -157,7 +157,7 @@ handleArgv()
                 if (isPublic === 'false') isPublic = false
             isPublic = Boolean(isPublic)
             console.log(isPublic)
-            await pixiv.downloadBookmark()
+            await pixiv.downloadBookmark(isPublic)
 
         }
 
