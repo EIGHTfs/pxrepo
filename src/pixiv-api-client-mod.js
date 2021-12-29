@@ -69,10 +69,10 @@ function callApi(url, options, retry = 2) {
                 await sleep(1000 * 5)
                 return callApi(url, options)
             } else if (err.response && err.response.data) {
-                const msg = err.response.data
-                if (JSON.stringify(msg).search('Your access is currently restricted.') != -1 ||
-                    JSON.stringify(msg).search('Work has been deleted or the ID does not exist.') != -1) {
-                    console.error(JSON.stringify(msg).red)
+                err.response.data
+                if (JSON.stringify(err.response.data).search('Your access is currently restricted.') != -1 ||
+                    JSON.stringify(err.response.data).search('Work has been deleted or the ID does not exist.') != -1) {
+                    console.error(JSON.stringify(err.response.data).red)
                     let uid = url.substring(url.lastIndexOf("user_id=") + 8, url.length)
                     console.log(uid.red)
                     global.blacklist = require(global.blacklistJson)
@@ -86,14 +86,14 @@ function callApi(url, options, retry = 2) {
                     url = null
                     return callApi(url, options)
                 } else if (JSON.stringify(msg).search('Rate Limit') != -1) {
-                    console.error('Rate limit ,暂停一小会.'.gray)
+                    console.error('Rate limit ,暂停一小会.'.yellow)
                     await sleep(1000 * 30)
-                } else throw msg
+                } else throw err.response.data
                 return callApi(url, options)
-            } else if (JSON.stringify(msg).search('Rate Limit') != -1) {
+            } else if (JSON.stringify(err.response.data).search('Rate Limit') != -1) {
                 console.error('Rate limit ,暂停一小会.'.gray)
                 await sleep(1000 * 30)
-            } else { throw msg }
+            } else { throw err.response.data }
         })
 }
 

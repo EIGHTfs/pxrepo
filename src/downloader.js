@@ -47,9 +47,8 @@ async function downloadByIllustrators(illustrators, callback) {
 
         console.log("\nCollecting illusts of " + (parseInt(i) + 1).toString().green + "/" + illustrators.length + " uid ".gray + illustrator.id.toString().cyan + " " + illustrator.name.yellow)
 
-        illustrator_id = illustrator.id
-        if (utils.checkExist(global.blacklist, illustrator_id)) {
-            console.log('黑名单：\t (' + illustrator_id + ')')
+        if (utils.checkExist(global.blacklist, parseInt(illustrator.id))) {
+            console.log('黑名单：\t (' + parseInt(illustrator.id) + ')')
             continue
         }
         global.historys = require(global.historyJson)

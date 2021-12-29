@@ -303,38 +303,22 @@ class PixivFunc {
      * @returns 关注列表
      * @memberof PixivFunc
      */
-    async getAllMyFollow(isPrivate = false, aptend) {
+    async getAllMyFollow(isPrivate = false) {
         let follows = []
         let historys = []
         const processDisplay = utils.showProgress(() => follows.length)
-        let uid
 
-        if (!Fs.existsSync(downJson)) //如果不存在downJson则创建
+        if (!Fs.existsSync(global.downJson)) //如果不存在downJson则创建
         {
 
             do {
                 follows.push(...(await this.getMyFollow(isPrivate)))
-                Fs.writeFileSync(downJson, JSON.stringify(follows))
-            } while (this.followNextUrl && follows.length < 5000 - 30)
-
-        } else if (aptend) //如果存在downJson则添加downJson中没有的到downJson末尾
-        {
-
-            follows = require(downJson)
-            do {
-                follows.push(...(await this.getMyFollow(isPrivate)))
-                Fs.writeFileSync(downJson, JSON.stringify(follows))
+                Fs.writeFileSync(global.downJson, JSON.stringify(follows))
             } while (this.followNextUrl && follows.length < 5000 - 30)
 
         }
 
 
-
-        /////////////
-
-
-
-        ///////////////
         utils.clearProgress(processDisplay)
 
         return follows
