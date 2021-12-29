@@ -85,23 +85,22 @@ function mkdirsSync(dirpath) {
     }
 }
 
+function jsonIndexOf(uid, json) {
+    for (let i in json) {
+        var item = json[i].id
+            //console.log(item)
+        if (item == uid) {
+            return i
+        }
 
+    }
+
+    return -1
+}
 
 function checkExist(items, uid, jsonFile) {
-
-    if (
-        JSON.stringify(items).search(
-
-            '\"id\":' +
-            parseInt(uid) +
-            ","
-        ) == -1 &&
-        JSON.stringify(items).search(
-            '\"id\":' +
-            parseInt(uid) +
-            "}"
-        ) == -1
-    ) {
+    //console.log(jsonIndexOf(uid, items))
+    if (jsonIndexOf(uid, items) == -1) {
         if (jsonFile != null) {
 
             console.log({
@@ -125,15 +124,7 @@ function showExists(jsonFile) {
 
 function deleteExist(uid, jsonFile) {
     let json = require(jsonFile)
-    for (let i in json) {
-        var item = json[i].id
-            //console.log(item)
-        if (item == uid) {
-            console.log(i)
-            json.splice(i, 1)
-        }
-
-    }
+    json.splice(jsonIndexOf(uid, json), 1)
 
     return json
 }
