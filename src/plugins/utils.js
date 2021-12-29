@@ -87,13 +87,7 @@ function mkdirsSync(dirpath) {
 
 
 
-/**
- * 检查我的画师列表是否已存在下载任务
- *
- * @param {stringn} [items] 
- * @param {int} [uid] 画师UID
- */
-function checkExist(items, uid, FileJson, illustrator_name, remark) {
+function checkExist(items, uid, jsonFile) {
 
     if (
         JSON.stringify(items).search(
@@ -108,40 +102,29 @@ function checkExist(items, uid, FileJson, illustrator_name, remark) {
             "}"
         ) == -1
     ) {
-        if (FileJson != null) {
-            if (illustrator_name != null) {
+        if (jsonFile != null) {
 
-                console.log({
-                    id: parseInt(uid),
-                    name: illustrator_name,
-                })
-                items.push({
-                    id: parseInt(uid),
-                    name: illustrator_name,
-                })
+            console.log({
+                id: parseInt(uid),
+            })
+            items.push({
+                id: parseInt(uid),
+            })
 
-            } else {
-                console.log({
-                    id: parseInt(uid),
-                })
-                items.push({
-                    id: parseInt(uid),
-                })
 
-            }
-            fs.writeFileSync(FileJson, JSON.stringify(items))
+            fs.writeFileSync(jsonFile, JSON.stringify(items))
         }
         return false
     } else return true
 }
 
-function showExists(FileJson) {
-    let json = require(FileJson)
+function showExists(jsonFile) {
+    let json = require(jsonFile)
     console.log(json)
 }
 
-function deleteExist(uid, FileJson) {
-    let json = require(FileJson)
+function deleteExist(uid, jsonFile) {
+    let json = require(jsonFile)
     for (let i in json) {
         var item = json[i].id
             //console.log(item)
