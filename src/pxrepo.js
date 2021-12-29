@@ -216,11 +216,11 @@ class PixivFunc {
     /**
      * 取得我的关注（一次30个）
      *
-     * @param {boolean} [isPrivate=false] 是否是私密关注
+     * @param {boolean} [isPublic=true] 是否是私密关注
      * @returns 关注列表
      * @memberof PixivFunc
      */
-    async getMyFollow(isPrivate = false) {
+    async getMyFollow(isPublic = true) {
         let follows = []
         let next = this.followNextUrl
         let dir_Illustrator
@@ -269,7 +269,7 @@ class PixivFunc {
         } else
             await this.pixiv
             .userFollowing(this.pixiv.authInfo().user.id, {
-                restrict: isPrivate ? 'private' : 'public',
+                restrict: isPublic ? 'public' : 'private',
             })
             .then(addToFollows)
 
@@ -299,11 +299,11 @@ class PixivFunc {
     /**
      * 取得我的所有关注
      *
-     * @param {boolean} [isPrivate=false] 是否是私密关注
+     * @param {boolean} [isPublic=true] 是否是私密关注
      * @returns 关注列表
      * @memberof PixivFunc
      */
-    async getAllMyFollow(isPrivate = false) {
+    async getAllMyFollow(isPublic = true) {
         let follows = []
         let historys = []
         const processDisplay = utils.showProgress(() => follows.length)
@@ -312,7 +312,7 @@ class PixivFunc {
         {
 
             do {
-                follows.push(...(await this.getMyFollow(isPrivate)))
+                follows.push(...(await this.getMyFollow(isPublic)))
                 Fs.writeFileSync(global.downJson, JSON.stringify(follows))
             } while (this.followNextUrl && follows.length < 5000 - 30)
 
@@ -350,23 +350,23 @@ class PixivFunc {
     /**
      * 根据收藏下载插画
      *
-     * @param {boolean} [isPrivate=false] 是否私密
+     * @param {boolean} [isPublic=true] 是否公开
      * @memberof PixivFunc
      */
-    async downloadBookmark(isPrivate = false) {
+    async downloadBookmark(isPublic = true) {
         const me = new Illustrator(this.pixiv.authInfo().user.id)
-        await Downloader.downloadByBookmark(me, isPrivate)
+        await Downloader.downloadByBookmark(me, isPublic)
     }
 
     /**
      * 下载关注画师的所有插画
      *
-     * @param {boolean} isPrivate 是否是私密关注
+     * @param {boolean} isPublic 是否是公开关注
      * @param {boolean} force 是否忽略上次进度
      * @memberof PixivFunc
      */
 
-    async downloadFollowAll(isPrivate) {
+    async downloadFollowAll(isPublic) {
         let follows = []
         let illustrators = null;
 
@@ -381,7 +381,7 @@ class PixivFunc {
             console.log('\nCollecting your follows')
 
 
-            await this.getAllMyFollow(isPrivate).then(ret => {
+            await this.getAllMyFollow(isPublic).then(ret => {
                 illustrators = ret
 
                 ret.forEach(

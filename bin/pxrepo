@@ -34,7 +34,6 @@ global.tempdir = Path.join(global.pxrepodir, 'temp')
 
 global.downJson = Path.join(global.configFileDir, 'download.json') //下载任务
 global.blacklistJson = Path.join(global.configFileDir, 'blacklist.json') //黑名单
-let blacklistJson = Path.join(global.configFileDir, 'blacklist.json') //黑名单
 global.historyJson = Path.join(global.configFileDir, 'history.json') //历史下载
 global.configFile = Path.join(global.configFileDir, 'config.json')
 
@@ -59,17 +58,15 @@ program
     .option('-p, --pid <pid(s)>', '通过插图PID下载插图, 逗号(,)分割')
     .option('-u, --uid <uid(s)>', '通过画师UID下载插图,逗号(,)分割')
     .option('')
-    .option('-f, --follow', '获取公开关注')
-    .option('-F, --follow-private', '获取私密关注')
+    .option('-G, --get [isPublic]', '获取关注 false为私有，默认为true，参数非fales均为true。')
     .option('')
-    .option('-b, --bookmark', '下载收藏')
-    .option('-B, --bookmark-private', '下载私密收藏')
+    .option('-B, --bookmark [isPublic]', '下载收藏')
     .option('')
     .option('-U, --update [Json]', "下载插图，也可以对所有画师插图更新下载")
     .option('-D, --delete', '清除未完成下载的文件')
     .option('-l, --blacklist <uid(s)>', '添加到黑名单，可以跳过该画师的下载')
     .option('')
-    .option('-M, --no-ugoira-meta', '将不会为ugoira请求元数据，这有助于节省时间或避免API速率限制错误时')
+    .option('-M, --no-ugoira-meta', '将不会为ugoira请求元数据，这有助于节省时间或避免API速率限制错误')
     .option('')
     .option('    --no-cf', '从i.pximg.net下载插图，而不是i-cf.pximg.net')
     .option('')
@@ -117,14 +114,17 @@ handleArgv()
         else if (typeof config.proxy == 'string' && config.proxy.length > 0) console.log('Using Proxy:\t'.cyan + config.proxy.yellow)
 
         global.cf = program.cf
-        if (program.follow) {
-            await pixiv.getAllMyFollow(false, program.aptend)
+        if (program.get) {
+            let isPublic = program.get
+                //console.log(isPublic)
+            if (typeof isPublic == 'string')
+                if (isPublic === 'false') isPublic = false
+            isPublic = Boolean(isPublic)
+            console.log(isPublic)
+            await pixiv.getAllMyFollow(isPublic)
 
         }
-        if (program.followPrivate) {
-            await pixiv.getAllMyFollow(true, program.aptend)
 
-        }
 
         ///////////////////////
         if (program.update) {
@@ -150,8 +150,16 @@ handleArgv()
         }
 
         /////////////////////////
-        if (program.bookmark) await pixiv.downloadBookmark()
-        if (program.bookmarkPrivate) await pixiv.downloadBookmark(true)
+        if (program.bookmark) {
+            let isPublic = program.get
+                //console.log(isPublic)
+            if (typeof isPublic == 'string')
+                if (isPublic === 'false') isPublic = false
+            isPublic = Boolean(isPublic)
+            console.log(isPublic)
+            await pixiv.downloadBookmark()
+
+        }
 
         if (program.uid) {
             //得到UID
@@ -170,7 +178,7 @@ handleArgv()
             } else help()
         }
 
-        if (!(program.follow || program.followPrivate || program.update || program.bookmark || program.bookmarkPrivate || program.uid || program.pid))
+        if (!(program.get || program.update || program.bookmark || program.uid || program.pid))
             help()
 
         pixiv.clearReloginInterval()

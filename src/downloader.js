@@ -157,12 +157,12 @@ async function getDownloadListByIllustrator(illustrator) {
  * 下载自己的收藏
  *
  * @param {Illustrator} me 自己
- * @param {boolean} [isPrivate=false] 是否是私密
+ * @param {boolean} [isPublic=true] 是否是公开
  * @returns
  */
-async function downloadByBookmark(me, isPrivate = false) {
+async function downloadByBookmark(me, isPublic = true) {
     //得到画师下载目录
-    let dir = '[bookmark] ' + (isPrivate ? 'Private' : 'Public')
+    let dir = '[bookmark] ' + (isPublic ? 'Public' : 'Private')
 
     console.log("\nCollecting illusts of your bookmark")
 
@@ -174,7 +174,7 @@ async function downloadByBookmark(me, isPrivate = false) {
     let cnt
     do {
         cnt = 0
-        let temps = await me.bookmarks(isPrivate)
+        let temps = await me.bookmarks(isPublic)
         for (let temp of temps) {
             if (!Fs.existsSync(Path.join(config.path, dir, temp.file))) {
                 illusts.push(temp)

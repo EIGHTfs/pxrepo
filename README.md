@@ -13,7 +13,7 @@
 ### 安装
 
 ```bash
-npm install
+`npm install`
 ```
 
 
@@ -22,7 +22,7 @@ npm install
 ### 登录
 
 ```bash
-pxrepo --login
+`pxrepo --login`
 ```
 
 注：pxrepo 仅会在计算机上储存 refreshAccessToken，而不会储存您的帐号密码
@@ -30,29 +30,41 @@ pxrepo --login
 如果要登出
 
 ```bash
-pxrepo --logout
+`pxrepo --logout`
 ```
 
 ## 对 pxder 的修改
-
-`pxrepo -f`
-`pxrepo -F`
+#### 获取关注 false为私有，默认为true，参数非fales均为true
+```bash
+`-G, --get [isPublic]', '获取关注 false为私有，默认为true，参数非fales均为true。`
+```
+例如
+```bash
+`pxrepo -G false`为获取私有画师
+```
 
 #### 仅获取写入到`download.json`
+```bash
+`-U`
+```
 
-`pxrepo -U`
+#### `download.json`不存在，读取所有下载的画师(通过画师对应的文件夹),写入到`download.json`然后进行更新，`download.json`存在即为下载功能，追加参数指定json文件下载，可以通过指定不同json文件多开.另外如果下载目录同时存在同一个画师不同时期用户名的文件夹，会“合并”
+```bash
+`-U downJson`
+`-U historyJson`
+```
 
-#### `download.json`不存在，读取所有下载的画师(通过画师对应的文件夹),写入到`download.json`然后进行更新，`download.json`存在即为下载功能，追加参数指定json文件下载，可以通过指定不同json文件多开
-
-`pxrepo -U downJson`
-`pxrepo -U historyJson`
 
 #### 任意路径下的json文件，请确保文件存在 
-`pxrepo -U Z:\pxrepo\config\download.json`
+```bash
+`-U Z:\pxrepo\config\download.json`
+```
 
-`pxrepo --setting`
+
 #### 不能够设置超时时间(我预设了)，线程上限随手改高了，可以设置到 90，默认为 32，然后图片太多实际会比设置的多几个线程
-
+```bash
+`--setting`
+```
 
 
 ### 其他方面
@@ -65,27 +77,18 @@ pxrepo --logout
 `Work has been deleted or the ID does not exist.`
 
 
-#### 增加"黑名单"功能手动`pxrepo -l`添加画师 ID 拉入"黑名单"，每次下载前都会检查欲下载的画师的 ID 是否存在于`blacklist.json`，存在就跳过。默认值`[{"id":11}]`,之所以搞这个是因为有些画师号没了;已经下载了保留了自己要的插图，不想再下载他其他的插图了;或者是下面这种情况，基本也可以"拉黑"了，这种好像是画师不让你下载了？，所谓的"拉黑"只是每次都跳过下载，并不是真的pixiv拉黑
-```bash
-{
-  error: {
-    user_message: 'Your access is currently restricted.',
-    message: '',
-    reason: '',
-    user_message_details: {}
-  }
-}
-```
+#### 增加"黑名单"功能手动`pxrepo -l`添加画师 ID 拉入"黑名单"，每次下载前都会检查欲下载的画师的 ID 是否存在于`blacklist.json`，存在就跳过。默认值`[{"id":11}]`.在下载过程中出错的ID会自动被加入.之所以搞这个是因为有些画师号没了;已经下载了保留了自己要的插图，不想再下载他其他的插图了，所谓的"拉黑"只是每次都跳过下载，并不是真的pixiv拉黑
+
 
 ### \*删除缓存目录下所有文件
 
 ```bash
-'-D, --delete'
+`-D, --delete`
 ```
 
 ### \*将不喜欢的画师拉入黑名单
 
 ```bash
-'-l, --blacklist <uid(s)>'
+`-l, --blacklist <uid(s)>`
 ```
 
