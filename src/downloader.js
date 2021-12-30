@@ -7,6 +7,7 @@ const Fse = require('fs-extra')
 
 const Path = require("path")
 const utils = require('./plugins/utils')
+const download = require('./plugins/download')
 const { UgoiraDir } = utils
 
 const pixivRefer = 'https://www.pixiv.net/'
@@ -258,7 +259,7 @@ function downloadIllusts(illusts, dldir, configThread) {
                         pause = false
                     }
                     //失败重试				
-                    return utils.download(complete, illust.file, illust.url, options, errorTimeout).then(async res => {
+                    return download.download(complete, illust.file, illust.url, options, errorTimeout).then(async res => {
                             //文件完整性校验
                             let fileSize = res.headers['content-length']
                             let dlfile = Path.join(complete, illust.file)
