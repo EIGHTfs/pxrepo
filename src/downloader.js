@@ -118,7 +118,7 @@ async function getDownloadListByIllustrator(illustrator) {
     let processDisplay = utils.showProgress(() => illusts.length)
     do {
         cnt = 0
-        let temps = await illustrator.illusts()
+        let temps = await illustrator.getIllusts('illust')
         for (let temp of temps) {
             if (!Fs.existsSync(Path.join(config.path, dir, temp.file))) {
                 illusts.push(temp)
@@ -160,11 +160,13 @@ async function downloadByBookmark(me, isPublic) {
     let illusts = []
 
     const processDisplay = utils.showProgress(() => illusts.length)
-    if (!Fs.existsSync(global.historyJson)) {
+    if (!Fs.existsSync(global.bookMark)) {
         console.log('\nCollecting illusts of your bookmark')
         do {
 
-            const temps = await me.bookmarks(isPublic)
+            const temps = await me.getIllusts('bookmark', {
+                restrict: isPublic ? 'public' : 'private',
+            })
             for (const temp of temps) {
                 if (!illustExists(temp.file)) {
                     //console.log(temp)
@@ -376,7 +378,7 @@ async function downloadByIllusts(illustJSON) {
     for (const json of illustJSON) {
         illusts = illusts.concat(await Illust.getIllusts(json))
     }
-    await downloadIllusts(illusts, Path.join(config.path, 'PID'), config.thread)
+    await downloadIllusts(illusts, Path.join(config.path, '「PID」'), config.thread)
 }
 
 

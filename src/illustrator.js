@@ -22,12 +22,6 @@ class Illustrator {
         }
     }
 
-    async setExampleIllusts(illustsJSON) {
-        this.exampleIllusts = []
-        for (const illustJSON of illustsJSON) {
-            this.exampleIllusts = this.exampleIllusts.concat(await Illust.getIllusts(illustJSON))
-        }
-    }
 
 
 
@@ -59,7 +53,7 @@ class Illustrator {
      * @returns 插画列表
      * @memberof Illustrator
      */
-    async getSomeIllusts(type, option = null) {
+    async getIllusts(type, option = null) {
         let result = []
         let json = {}
 
@@ -83,28 +77,7 @@ class Illustrator {
         return result
     }
 
-    /**
-     * 得到用户的插画（一次30张）
-     *
-     * @returns
-     * @memberof Illustrator
-     */
-    illusts() {
-        return this.getSomeIllusts('illust')
-    }
 
-    /**
-     * 得到用户的收藏（一次30张）
-     *
-     * @param {boolean} [isPublic=true] 是否是私密
-     * @returns
-     * @memberof Illustrator
-     */
-    bookmarks(isPublic = true) {
-        return this.getSomeIllusts('bookmark', {
-            restrict: isPublic ? 'public' : 'private',
-        })
-    }
 
     /**
      * 是否还有

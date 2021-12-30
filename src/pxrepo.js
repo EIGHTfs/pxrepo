@@ -266,10 +266,10 @@ class PixivFunc {
 
         //开始收集
         if (next) {
-            await this.pixiv.requestUrl(next).then(addToFollows)
+            await global.pixiv.requestUrl(next).then(addToFollows)
         } else
-            await this.pixiv
-            .userFollowing(this.pixiv.authInfo().user.id, {
+            await global.pixiv
+            .userFollowing(global.pixiv.authInfo().user.id, {
                 restrict: isPublic ? 'public' : 'private',
             })
             .then(addToFollows)
@@ -355,7 +355,7 @@ class PixivFunc {
      * @memberof PixivFunc
      */
     async downloadBookmark(isPublic) {
-        const me = new Illustrator(this.pixiv.authInfo().user.id)
+        const me = new Illustrator(global.pixiv.authInfo().user.id)
         await Downloader.downloadByBookmark(me, isPublic)
     }
 
@@ -528,7 +528,7 @@ class PixivFunc {
         for (const pid of pids) {
             if (exists.includes(pid)) continue
             try {
-                jsons.push(await this.pixiv.illustDetail(pid).then(json => json.illust))
+                jsons.push(await global.pixiv.illustDetail(pid).then(json => json.illust))
             } catch (error) {
                 console.log(`${pid} does not exist`.red)
             }
