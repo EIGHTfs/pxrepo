@@ -258,11 +258,10 @@ function downloadIllusts(illusts, dldir, configThread) {
                         pause = false
                     }
                     //失败重试				
-                    var tempDir = complete
-                    return utils.download(tempDir, illust.file, illust.url, options, errorTimeout).then(async res => {
+                    return utils.download(complete, illust.file, illust.url, options, errorTimeout).then(async res => {
                             //文件完整性校验
                             let fileSize = res.headers['content-length']
-                            let dlfile = Path.join(tempDir, illust.file)
+                            let dlfile = Path.join(complete, illust.file)
 
 
 
@@ -362,27 +361,7 @@ async function getIllustratorNewDir(data) {
         dldir = dldirNew
     } else if (config.autoRename && dldir != dldirNew) {
 
-        if (Fs.existsSync(Path.join(mainDir, dldirNew))) //如果新旧画师文件夹同时存在，遍历旧文件夹所有文件，覆盖方式移动到新文件夹内
-        {
-            console.log("已存在 %s", dldirNew.green)
-            let fdir = Path.join(mainDir, dldir)
-            let Fdir = Path.join(mainDir, dldirNew)
-
-            await utils.readDirSync(fdir).then(files => {
-                for (let file of files) {
-                    Fse.moveSync(Path.join(fdir, file), Path.join(Fdir, file), {
-                        overwrite: true
-                    })
-                }
-
-            })
-            Fse.removeSync(Path.join(mainDir, dldir)) //删除旧文件夹
-
-
-        } else {
-            Fs.renameSync(Path.join(mainDir, dldir), Path.join(mainDir, dldirNew))
-
-        }
+        await utils.foldersMerge(Path.join(mainDir, dldir), Path.join(mainDir, dldirNew))
         console.log("\nDirectory renamed: %s => %s", dldir.yellow, dldirNew.green)
 
         dldir = dldirNew

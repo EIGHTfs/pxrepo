@@ -85,6 +85,29 @@ function mkdirsSync(dirpath) {
     }
 }
 
+async function foldersMerge(folderOld, folderNew) {
+    if (fs.existsSync(folderNew)) //如果新旧画师文件夹同时存在，遍历旧文件夹所有文件，覆盖方式移动到新文件夹内
+    {
+        console.log("已存在 %s", folderNew.red)
+
+        await readDirSync(folderOld).then(files => {
+            for (let file of files) {
+                fse.moveSync(Path.join(folderOld, file), Path.join(folderNew, file), {
+                    overwrite: true
+                })
+            }
+
+        })
+        fse.removeSync(folderOld) //删除旧文件夹
+
+
+    } else {
+        fs.renameSync(folderOld, folderNew)
+
+    }
+}
+
+
 function jsonIndexOf(uid, json) {
     for (let i in json) {
         var item = json[i].id
@@ -157,6 +180,7 @@ module.exports = {
     download,
     UgoiraDir,
     mkdirsSync,
+    foldersMerge,
     readJsonSafely,
     checkExist,
     sleep,
