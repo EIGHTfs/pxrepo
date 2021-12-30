@@ -159,7 +159,7 @@ async function getDownloadListByIllustrator(illustrator) {
  * 下载自己的收藏
  *
  * @param {Illustrator} me 自己
- * @param {boolean} [isPublic] 是否是公开
+ * @param {boolean} [isPublic=true] 是否是公开
  * @returns
  */
 async function downloadByBookmark(me, isPublic) {
