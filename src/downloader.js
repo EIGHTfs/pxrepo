@@ -86,12 +86,12 @@ async function getDownloadListByIllustrator(illustrator) {
 
 
     let illusts = []
-
-    //得到画师下载目录
-    let dir = await illustrator.info().then(getIllustratorNewDir)
-
-
-    //检测网络
+        // 得到画师下载目录
+    const dir = await illustrator.info().then(getIllustratorNewDir)
+    const dldir = Path.join(config.path, dir)
+    const ugoiraDir = new UgoiraDir(dldir)
+    const illustExists = file => (file.endsWith('.zip') ? ugoiraDir.existsSync(file) : Fse.existsSync(Path.join(dldir, file)))
+        //检测网络
     function isonline() {
         var isOnline = require('is-online')
         isOnline({
@@ -165,10 +165,11 @@ async function getDownloadListByIllustrator(illustrator) {
  */
 async function downloadByBookmark(me, isPublic) {
     //得到画师下载目录
-    let dir = '[bookmark] ' + (isPublic ? 'Public' : 'Private')
+    let dir = '「Bookmark」] '
     const dldir = Path.join(config.path, dir)
     const ugoiraDir = new UgoiraDir(dldir)
     const illustExists = file => (file.endsWith('.zip') ? ugoiraDir.existsSync(file) : Fse.existsSync(Path.join(dldir, file)))
+
 
     console.log('\nCollecting illusts of your bookmark')
 
@@ -177,18 +178,18 @@ async function downloadByBookmark(me, isPublic) {
 
     const processDisplay = utils.showProgress(() => illusts.length)
 
-    let cnt
     do {
-        cnt = 0
+
         const temps = await me.bookmarks(isPublic)
         for (const temp of temps) {
             if (!illustExists(temp.file)) {
+                //console.log(temp)
                 illusts.push(temp)
-                cnt++
+
             }
         }
-    } while (me.hasNext('bookmark') && cnt > 0)
-
+    } while (me.hasNext('bookmark'))
+    await Fs.writeFileSync(global.bookMark, JSON.stringify(illusts))
     utils.clearProgress(processDisplay)
 
     // 下载
@@ -260,41 +261,44 @@ function downloadIllusts(illusts, dldir, configThread) {
                     }
                     //失败重试				
                     return download.download(complete, illust.file, illust.url, options, errorTimeout).then(async res => {
-                            //文件完整性校验
-                            let fileSize = res.headers['content-length']
-                            let dlfile = Path.join(complete, illust.file)
+
+                        //文件完整性校验
+                        let fileSize = res.headers['content-length']
+                        let dlfile = Path.join(complete, illust.file)
 
 
 
-                            for (let i = 0; i < 10 && !Fs.existsSync(dlfile); i++) await utils.sleep(200) ////
+                        for (let i = 0; i < 10 && !Fs.existsSync(dlfile); i++) await utils.sleep(200) ////
 
-                            await utils.sleep(500)
-                            dlFileSize = Fs.statSync(dlfile).size
+                        await utils.sleep(500)
+                        dlFileSize = Fs.statSync(dlfile).size
 
 
 
-                            if (!fileSize || dlFileSize == fileSize) //根据文件大小判断下载是否成功
-                            {
-                                //utils.clearProgress(processDisplay);
+                        if (!fileSize || dlFileSize == fileSize) //根据文件大小判断下载是否成功
+                        {
+                            //utils.clearProgress(processDisplay);
 
-                                Fse.moveSync(dlfile, Path.join(dldir, illust.file)) //从缓存目录到下载目录
+                            Fse.moveSync(dlfile, Path.join(dldir, illust.file)) //从缓存目录到下载目录
 
-                            } else {
-                                Fs.unlinkSync(dlfile)
-                                throw new Error('Incomplete download')
-                            }
+                        } else {
+                            Fs.unlinkSync(dlfile)
+                            throw new Error('Incomplete download')
+                        }
 
-                            if (times != 1) errorThread--
-                        })
-                        .catch(e => {
-                            if (e && e.response && e.response.status == 404) {
-                                console.log(`[${threadID + 1}]   \t${(parseInt(i) + 1).toString().red}/${illusts.length}    \t${"pid".gray}  ${illust.id.toString().cyan}   \t${illust.title.yellow}`)
-                                return
-                            } else if (times == 1) errorThread++
-                                if (global.p_debug) console.log(e)
-                            console.log(`[${threadID + 1}]   \t${(parseInt(i) + 1).toString().yellow}/${illusts.length}    \t${"pid".gray}  ${illust.id.toString().cyan}   \t${illust.title.yellow}`)
-                            return tryDownload(times + 1)
-                        })
+                        if (times != 1) errorThread--
+                    })
+
+
+                    .catch(e => {
+                        if (e && e.response && e.response.status == 404) {
+                            console.log(`[${threadID + 1}]   \t${(parseInt(i) + 1).toString().red}/${illusts.length}    \t${"pid".gray}  ${illust.id.toString().cyan}   \t${illust.title.yellow}`)
+                            return
+                        } else if (times == 1) errorThread++
+                            if (global.p_debug) console.log(e)
+                        console.log(`[${threadID + 1}]   \t${(parseInt(i) + 1).toString().yellow}/${illusts.length}    \t${"pid".gray}  ${illust.id.toString().cyan}   \t${illust.title.yellow}`)
+                        return tryDownload(times + 1)
+                    })
                 })(1)
             }
         })
