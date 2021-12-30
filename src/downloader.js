@@ -15,7 +15,7 @@ let downthread = 0
 let dlFileSize
 let complete
 let config
-let Network = 0
+let Network = 100
 
 
 let httpsAgent = false
@@ -92,24 +92,7 @@ async function getDownloadListByIllustrator(illustrator) {
     const ugoiraDir = new UgoiraDir(dldir)
     const illustExists = file => (file.endsWith('.zip') ? ugoiraDir.existsSync(file) : Fse.existsSync(Path.join(dldir, file)))
         //检测网络
-    function isonline() {
-        var isOnline = require('is-online')
-        isOnline({
-            timeout: 2000,
-            version: "v4" // v4 or v6
-        }).then(online => {
-            if (online) {
-                //console.log("Network".green);
-                Network = 100
-                    //console.log(Network);
-            } else {
-                //console.log("Network".yellow);
-                Network = 200
-                    //console.log(Network);
-            }
-        })
-    }
-    isonline()
+
     await utils.sleep(1000)
 
     //最新画作检查
@@ -171,26 +154,31 @@ async function downloadByBookmark(me, isPublic) {
     const illustExists = file => (file.endsWith('.zip') ? ugoiraDir.existsSync(file) : Fse.existsSync(Path.join(dldir, file)))
 
 
-    console.log('\nCollecting illusts of your bookmark')
+
 
     // 得到未下载的画作
-    const illusts = []
+    let illusts = []
 
     const processDisplay = utils.showProgress(() => illusts.length)
+    if (!Fs.existsSync(global.historyJson)) {
+        console.log('\nCollecting illusts of your bookmark')
+        do {
 
-    do {
+            const temps = await me.bookmarks(isPublic)
+            for (const temp of temps) {
+                if (!illustExists(temp.file)) {
+                    //console.log(temp)
+                    illusts.push(temp)
 
-        const temps = await me.bookmarks(isPublic)
-        for (const temp of temps) {
-            if (!illustExists(temp.file)) {
-                //console.log(temp)
-                illusts.push(temp)
-
+                }
             }
-        }
-    } while (me.hasNext('bookmark'))
-    await Fs.writeFileSync(global.bookMark, JSON.stringify(illusts))
+        } while (me.hasNext('bookmark'))
+
+        await Fs.writeFileSync(global.bookMark, JSON.stringify(illusts))
+
+    }
     utils.clearProgress(processDisplay)
+    illusts = require(global.bookMark)
 
     // 下载
     await downloadIllusts(illusts.reverse(), Path.join(dldir), config.thread)
@@ -213,24 +201,25 @@ function downloadIllusts(illusts, dldir, configThread) {
     let errorThread = 0
     let pause = false
     let hangup = 1000 * 60 * 1
-    let errorTimeout = 1000 * 45
+    global.errorTimeout = 1000 * 45
 
     //单个线程
     function singleThread(threadID) {
 
         return new Promise(async resolve => {
             while (true) {
-                let i = totalI++
-                    //线程终止
-                    if (i >= illusts.length) return resolve(threadID)
-                downthread = illusts.length
-                let illust = illusts[i]
 
+
+                const i = totalI++
+                    // 线程终止
+                    if (i >= illusts.length) return resolve(threadID)
+
+                const illust = illusts[i]
                 let options = {
                         headers: {
                             referer: pixivRefer,
                         },
-                        timeout: 1000 * 15,
+                        timeout: 1000 * 60,
                     }
                     //代理
                 if (httpsAgent) options.httpsAgent = httpsAgent
@@ -247,8 +236,8 @@ function downloadIllusts(illusts, dldir, configThread) {
 
                     if (times > 3) {
                         if (errorThread > 1) {
-                            if (errorTimeout) clearTimeout(errorTimeout)
-                            errorTimeout = setTimeout(() => {
+                            if (global.errorTimeout) clearTimeout(global.errorTimeout)
+                            global.errorTimeout = setTimeout(() => {
                                 console.log('\n' + '网络错误，暂停'.red + '\n')
                             }, 1000)
                             pause = true
@@ -259,7 +248,8 @@ function downloadIllusts(illusts, dldir, configThread) {
                         await utils.sleep(hangup)
                         pause = false
                     }
-                    //失败重试				
+                    //失败重试	
+                    //console.log(illust)
                     return download.download(complete, illust.file, illust.url, options, errorTimeout).then(async res => {
 
                         //文件完整性校验
@@ -307,7 +297,7 @@ function downloadIllusts(illusts, dldir, configThread) {
     let threads = []
 
     //开始多线程
-    for (let t = 0; t < (Math.ceil(downthread / Network) + configThread) && t < configThread + 2; t++) //
+    for (let t = 0; t < (Math.ceil(illusts.length / Network) + configThread) && t < configThread + 2; t++) //
     {
 
         threads.push(singleThread(t).catch(e => {
@@ -331,7 +321,6 @@ function downloadIllusts(illusts, dldir, configThread) {
         //.then(res => console.log(res), err => console.log(err))
 
 }
-
 
 /**
  * 得到某个画师对应的下载目录名

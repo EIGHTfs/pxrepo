@@ -13,7 +13,7 @@ const Path = require('path')
  * @param {*} axiosOption Option for axios
  * @returns Axios promise
  */
-async function download(dirpath, filename, url, axiosOption, errorTimeout) {
+async function download(dirpath, filename, url, axiosOption) {
     console.time(filename)
     fse.ensureDirSync(dirpath)
     axiosOption.responseType = 'stream'
@@ -31,7 +31,7 @@ async function download(dirpath, filename, url, axiosOption, errorTimeout) {
         setTimeout(() => {
             console.timeEnd(filename)
             reject('Promise time out')
-        }, errorTimeout)
+        }, global.errorTimeout)
     })
 }
 

@@ -141,6 +141,23 @@ class UgoiraDir {
     }
 }
 
+function isonline() {
+    var isOnline = require('is-online')
+    isOnline({
+        timeout: 2000,
+        version: "v4" // v4 or v6
+    }).then(online => {
+        if (online) {
+            //console.log("Network".green);
+            Network = 100
+                //console.log(Network);
+        } else {
+            //console.log("Network".yellow);
+            Network = 200
+                //console.log(Network);
+        }
+    })
+}
 module.exports = {
     readDirSync,
     showProgress,
