@@ -529,7 +529,7 @@ class PixivFunc {
             try {
                 jsons.push(await this.pixiv.illustDetail(pid).then(json => json.illust))
             } catch (error) {
-                console.log(`${pid} does not exist`.gray)
+                console.log(`${pid} does not exist`.red)
             }
         }
         await Downloader.downloadByIllusts(jsons)
