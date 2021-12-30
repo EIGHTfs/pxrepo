@@ -13,7 +13,7 @@ const { UgoiraDir } = utils
 const pixivRefer = 'https://www.pixiv.net/'
 let downthread = 0
 let dlFileSize
-let complete
+
 let config
 let Network = 100
 
@@ -57,8 +57,8 @@ async function downloadByIllustrators(illustrators, callback) {
         global.historys = require(global.historyJson)
 
         utils.checkExist(historys, illustrator.id.toString(), historyJson, illustrator.name)
-        complete = Path.join(tempdir, illustrator.id.toString())
-        console.log(complete)
+        let inComplete = Path.join(global.inComplete, illustrator.id.toString())
+        console.log(inComplete)
 
         //取得下载信息
         let info = await getDownloadListByIllustrator(illustrator)
@@ -69,12 +69,10 @@ async function downloadByIllustrators(illustrators, callback) {
         //回调
         if (typeof(callback) == 'function') callback(i)
 
-        Fse.removeSync(complete)
+        Fse.removeSync(inComplete)
 
     }
 }
-
-
 
 /**
  * 获得该画师需要下载的画作列表
@@ -84,32 +82,7 @@ async function downloadByIllustrators(illustrators, callback) {
  */
 async function getDownloadListByIllustrator(illustrator) {
     illustratorFolder = await illustrator.info().then(getIllustratorNewDir)
-
     let illusts = []
-        // 得到画师下载目录
-
-
-    await utils.sleep(1000)
-
-    //最新画作检查
-    let exampleIllusts = illustrator.exampleIllusts
-    if (exampleIllusts) {
-        let existNum = 0
-        for (let ei of exampleIllusts) {
-            if (Fs.existsSync(Path.join(config.path, illustratorFolder, ei.file))) existNum++
-                else illusts.push(ei)
-        }
-        if (existNum > 0) {
-            return {
-                dir,
-                illusts: illusts.reverse()
-            }
-        }
-    }
-
-
-    //得到未下载的画作
-    illusts = []
     let cnt
     let processDisplay = utils.showProgress(() => illusts.length)
     do {
@@ -121,16 +94,11 @@ async function getDownloadListByIllustrator(illustrator) {
                 cnt++
             }
         }
-
-
-
     } while (illustrator.hasNext('illustrator') && cnt > 0 && illusts.length < 4500) utils.clearProgress(processDisplay)
-
     return {
         illustratorFolder,
         illusts: illusts.reverse()
     }
-
 }
 
 
@@ -245,11 +213,11 @@ function downloadIllusts(illusts, dldir, configThread) {
                     }
                     //失败重试	
                     //console.log(illust)
-                    return download.download(complete, illust.file, illust.url, options, errorTimeout).then(async res => {
+                    return download.download(inComplete, illust.file, illust.url, options, errorTimeout).then(async res => {
 
                         //文件完整性校验
                         let fileSize = res.headers['content-length']
-                        let dlfile = Path.join(complete, illust.file)
+                        let dlfile = Path.join(inComplete, illust.file)
 
 
 

@@ -29,9 +29,9 @@ const prompts = require('prompts')
 const open = require('open')
 
 global.pxrepodir = Path.resolve(__dirname, '..') //pxrepo根目录
-global.tempdir = Path.join(global.pxrepodir, 'temp') //下载路径
+global.inComplete = Path.join(global.pxrepodir, 'inComplete') //下载路径
 global.configFileDir = Path.join(global.pxrepodir, 'config') //设置路径
-global.tempdir = Path.join(global.pxrepodir, 'temp')
+
 
 global.downJson = Path.join(global.configFileDir, 'download.json') //下载任务
 global.blacklistJson = Path.join(global.configFileDir, 'blacklist.json') //黑名单
@@ -252,10 +252,10 @@ async function handleArgv() {
         console.log('\nLogout success!\n'.green)
     } else if (program.delete) {
 
-        await utils.readDirSync(tempdir).then(files => {
+        await utils.readDirSync(global.inComplete).then(files => {
             for (let file of files) {
 
-                Fse.removeSync(Path.join(tempdir, file))
+                Fse.removeSync(Path.join(global.inComplete, file))
                 console.log('Delete:\t' + file)
 
             }
