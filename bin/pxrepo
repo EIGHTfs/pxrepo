@@ -6,6 +6,7 @@ require('colors')
 const Pixiv = require('../src/pxrepo')
 const pixivLogin = require('../src/pixiv-login')
 const PixivApi = require('../src/pixiv-api-client-mod')
+
 const utils = require('../src/plugins/utils')
 const pkg = require('../package.json')
 const Fse = require('fs-extra')

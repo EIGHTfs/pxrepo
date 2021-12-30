@@ -1,6 +1,5 @@
 const Illust = require('./illust')
 
-let pixiv
 
 /**
  * 画师
@@ -30,9 +29,7 @@ class Illustrator {
         }
     }
 
-    static setPixiv(p) {
-        pixiv = p
-    }
+
 
     /**
      * 获取画师信息
@@ -48,7 +45,7 @@ class Illustrator {
                 name: this.name,
             }
         } else {
-            userData = await pixiv.userDetail(this.id).then(ret => ret.user)
+            userData = await global.pixiv.userDetail(this.id).then(ret => ret.user)
             this.name = userData.name
         }
         return userData
@@ -67,12 +64,12 @@ class Illustrator {
         let json = {}
 
         // 请求
-        if (this.next[type]) json = await pixiv.requestUrl(this.next[type])
+        if (this.next[type]) json = await global.pixiv.requestUrl(this.next[type])
         else {
-            if (type == 'illust') json = await pixiv.userIllusts(this.id)
+            if (type == 'illust') json = await global.pixiv.userIllusts(this.id)
             else if (type == 'bookmark') {
-                if (option) json = await pixiv.userBookmarksIllust(this.id, option)
-                else json = await pixiv.userBookmarksIllust(this.id)
+                if (option) json = await global.pixiv.userBookmarksIllust(this.id, option)
+                else json = await global.pixiv.userBookmarksIllust(this.id)
             }
         }
 

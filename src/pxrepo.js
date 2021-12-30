@@ -141,10 +141,10 @@ class PixivFunc {
 
     static async login(code, code_verifier) {
         // 登录
-        const pixiv = new PixivApi()
-        await pixiv.tokenRequest(code, code_verifier)
+
+        await global.pixiv.tokenRequest(code, code_verifier)
             // 获取 refresh_token
-        const refresh_token = pixiv.authInfo().refresh_token
+        const refresh_token = global.pixiv.authInfo().refresh_token
             // 更新配置
         const conf = PixivFunc.readConfig()
         conf.refresh_token = refresh_token
@@ -160,8 +160,8 @@ class PixivFunc {
      */
     static async loginByToken(token) {
         // 测试登录
-        const pixiv = new PixivApi()
-        await pixiv.refreshAccessToken(token)
+
+        await global.pixiv.refreshAccessToken(token)
             // 更新配置
         const conf = PixivFunc.readConfig()
         conf.refresh_token = token
@@ -180,12 +180,13 @@ class PixivFunc {
         const refresh_token = PixivFunc.readConfig().refresh_token
         if (!refresh_token) return false
             //刷新token
-        this.pixiv = new PixivApi()
-        await this.pixiv.refreshAccessToken(refresh_token)
-        Illustrator.setPixiv(this.pixiv)
-        require('./illust').setPixiv(this.pixiv)
-            //定时刷新token
-        const p = this.pixiv
+
+        await global.pixiv.refreshAccessToken(refresh_token)
+
+
+
+        //定时刷新token
+        const p = global.pixiv
         this.reloginInterval = setInterval(() => {
             p.refreshAccessToken(refresh_token)
         }, 40 * 60 * 1000)

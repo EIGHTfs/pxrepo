@@ -1,5 +1,3 @@
-let pixiv
-
 /**
  * 插画
  *
@@ -21,9 +19,6 @@ class Illust {
         this.file = file
     }
 
-    static setPixiv(p) {
-        pixiv = p
-    }
 
     getObject() {
         return {
@@ -51,7 +46,7 @@ class Illust {
             const ugoiraParams = [id, title, illustJSON.meta_single_page.original_image_url.replace('img-original', 'img-zip-ugoira').replace(/_ugoira0\.(.*)/, '_ugoira1920x1080.zip')]
             if (global.ugoiraMeta) {
                 try {
-                    const uDelay = await pixiv.ugoiraMetaData(id).then(ret => ret.ugoira_metadata.frames[0].delay)
+                    const uDelay = await global.pixiv.ugoiraMetaData(id).then(ret => ret.ugoira_metadata.frames[0].delay)
                     illusts.push(new Illust(...ugoiraParams, `(${id})${fileName}@${uDelay}ms.zip`))
                 } catch (error) {
                     console.error('\nFailed to get ugoira meta data . If you get a rate limit error, please use ', '--no-ugoira-meta'.yellow, 'argument to avoid it.', error, '\n')
