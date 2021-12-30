@@ -60,7 +60,7 @@ class Illustrator {
         // 请求
         if (this.next[type]) json = await global.pixiv.requestUrl(this.next[type])
         else {
-            if (type == 'illust') json = await global.pixiv.userIllusts(this.id)
+            if (type == 'illustrator') json = await global.pixiv.userIllusts(this.id)
             else if (type == 'bookmark') {
                 if (option) json = await global.pixiv.userBookmarksIllust(this.id, option)
                 else json = await global.pixiv.userBookmarksIllust(this.id)

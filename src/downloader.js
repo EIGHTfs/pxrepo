@@ -64,7 +64,7 @@ async function downloadByIllustrators(illustrators, callback) {
         let info = await getDownloadListByIllustrator(illustrator)
         await illustrator.info().then(getIllustratorNewDir)
             //下载
-        await downloadIllusts(info.illusts, Path.join(config.path, info.dir), config.thread)
+        await downloadIllusts(info.illusts, Path.join(config.path, info.illustratorFolder), config.thread)
 
         //回调
         if (typeof(callback) == 'function') callback(i)
@@ -83,15 +83,11 @@ async function downloadByIllustrators(illustrators, callback) {
  * @returns
  */
 async function getDownloadListByIllustrator(illustrator) {
-
+    illustratorFolder = await illustrator.info().then(getIllustratorNewDir)
 
     let illusts = []
         // 得到画师下载目录
-    const dir = await illustrator.info().then(getIllustratorNewDir)
-    const dldir = Path.join(config.path, dir)
-    const ugoiraDir = new UgoiraDir(dldir)
-    const illustExists = file => (file.endsWith('.zip') ? ugoiraDir.existsSync(file) : Fse.existsSync(Path.join(dldir, file)))
-        //检测网络
+
 
     await utils.sleep(1000)
 
@@ -100,7 +96,7 @@ async function getDownloadListByIllustrator(illustrator) {
     if (exampleIllusts) {
         let existNum = 0
         for (let ei of exampleIllusts) {
-            if (Fs.existsSync(Path.join(config.path, dir, ei.file))) existNum++
+            if (Fs.existsSync(Path.join(config.path, illustratorFolder, ei.file))) existNum++
                 else illusts.push(ei)
         }
         if (existNum > 0) {
@@ -118,21 +114,20 @@ async function getDownloadListByIllustrator(illustrator) {
     let processDisplay = utils.showProgress(() => illusts.length)
     do {
         cnt = 0
-        let temps = await illustrator.getIllusts('illust')
-        for (let temp of temps) {
-            if (!Fs.existsSync(Path.join(config.path, dir, temp.file))) {
-                illusts.push(temp)
+        let allTheIllusts = await illustrator.getIllusts('illustrator')
+        for (let illust of allTheIllusts) {
+            if (!Fs.existsSync(Path.join(config.path, illustratorFolder, illust.file))) {
+                illusts.push(illust)
                 cnt++
             }
         }
 
 
 
-    } while (illustrator.hasNext('illust') && cnt > 0 && illusts.length < 4500)
-    utils.clearProgress(processDisplay)
+    } while (illustrator.hasNext('illustrator') && cnt > 0 && illusts.length < 4500) utils.clearProgress(processDisplay)
 
     return {
-        dir,
+        illustratorFolder,
         illusts: illusts.reverse()
     }
 
@@ -148,9 +143,7 @@ async function getDownloadListByIllustrator(illustrator) {
  */
 async function downloadByBookmark(me, isPublic) {
     //得到画师下载目录
-    let dir = '「Bookmark」] '
-    const dldir = Path.join(config.path, dir)
-    const ugoiraDir = new UgoiraDir(dldir)
+    const ugoiraDir = new UgoiraDir(Path.join(config.path, '「Bookmark」'))
     const illustExists = file => (file.endsWith('.zip') ? ugoiraDir.existsSync(file) : Fse.existsSync(Path.join(dldir, file)))
 
 
@@ -183,7 +176,7 @@ async function downloadByBookmark(me, isPublic) {
     illusts = require(global.bookMark)
 
     // 下载
-    await downloadIllusts(illusts.reverse(), Path.join(dldir), config.thread)
+    await downloadIllusts(illusts.reverse(), Path.join(Path.join(config.path, '「Bookmark」')), config.thread)
 }
 
 
