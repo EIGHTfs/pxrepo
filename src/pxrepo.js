@@ -353,7 +353,7 @@ class PixivFunc {
      * @param {boolean} [isPublic=true] 是否公开
      * @memberof PixivFunc
      */
-    async downloadBookmark(isPublic = true) {
+    async downloadBookmark(isPublic) {
         const me = new Illustrator(this.pixiv.authInfo().user.id)
         await Downloader.downloadByBookmark(me, isPublic)
     }
@@ -515,11 +515,9 @@ class PixivFunc {
      */
     async downloadByPIDs(pids) {
         const jsons = []
-        const PIDdir = Path.join(__config.download.path, 'PID')
-        if (!Fs.existsSync(PIDdir))
-            Fs.mkdirSync(PIDdir)
-
-        const exists = Fse.readdirSync(PIDdir)
+        const dirPath = Path.join(__config.download.path, 'PID')
+        Fse.ensureDirSync(dirPath)
+        const exists = Fse.readdirSync(dirPath)
             .map(file => {
                 const search = /^\(([0-9]+)\)/.exec(file)
                 if (search && search[1]) return search[1]
@@ -535,7 +533,7 @@ class PixivFunc {
             }
         }
         await Downloader.downloadByIllusts(jsons)
-
     }
 }
+
 module.exports = PixivFunc

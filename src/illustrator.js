@@ -99,13 +99,13 @@ class Illustrator {
     /**
      * 得到用户的收藏（一次30张）
      *
-     * @param {boolean} [isPrivate=false] 是否是私密
+     * @param {boolean} [isPublic=true] 是否是私密
      * @returns
      * @memberof Illustrator
      */
-    bookmarks(isPrivate = false) {
+    bookmarks(isPublic = true) {
         return this.getSomeIllusts('bookmark', {
-            restrict: isPrivate ? 'private' : 'public',
+            restrict: isPublic ? 'public' : 'private',
         })
     }
 

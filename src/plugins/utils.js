@@ -135,13 +135,27 @@ function sleep(ms) {
     })
 }
 
+class UgoiraDir {
+    constructor(dirpath) {
+        this.files = new Set(
+            fse.existsSync(dirpath) ?
+            fse.readdirSync(dirpath)
+            .filter(file => file.endsWith('.zip'))
+            .map(file => file.replace(/@\d+?ms/g, '')) : []
+        )
+    }
 
+    existsSync(file) {
+        return this.files.has(file.replace(/@\d+?ms/g, ''))
+    }
+}
 
 module.exports = {
     readDirSync,
     showProgress,
     clearProgress,
     download,
+    UgoiraDir,
     mkdirsSync,
     readJsonSafely,
     checkExist,

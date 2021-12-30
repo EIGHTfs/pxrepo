@@ -7,6 +7,8 @@ const Fse = require('fs-extra')
 
 const Path = require("path")
 const utils = require('./plugins/utils')
+const { UgoiraDir } = utils
+
 const pixivRefer = 'https://www.pixiv.net/'
 let downthread = 0
 let dlFileSize
@@ -160,23 +162,26 @@ async function getDownloadListByIllustrator(illustrator) {
  * @param {boolean} [isPublic=true] 是否是公开
  * @returns
  */
-async function downloadByBookmark(me, isPublic = true) {
+async function downloadByBookmark(me, isPublic) {
     //得到画师下载目录
     let dir = '[bookmark] ' + (isPublic ? 'Public' : 'Private')
+    const dldir = Path.join(config.path, dir)
+    const ugoiraDir = new UgoiraDir(dldir)
+    const illustExists = file => (file.endsWith('.zip') ? ugoiraDir.existsSync(file) : Fse.existsSync(Path.join(dldir, file)))
 
-    console.log("\nCollecting illusts of your bookmark")
+    console.log('\nCollecting illusts of your bookmark')
 
-    //得到未下载的画作
-    let illusts = []
+    // 得到未下载的画作
+    const illusts = []
 
-    let processDisplay = utils.showProgress(() => illusts.length)
+    const processDisplay = utils.showProgress(() => illusts.length)
 
     let cnt
     do {
         cnt = 0
-        let temps = await me.bookmarks(isPublic)
-        for (let temp of temps) {
-            if (!Fs.existsSync(Path.join(config.path, dir, temp.file))) {
+        const temps = await me.bookmarks(isPublic)
+        for (const temp of temps) {
+            if (!illustExists(temp.file)) {
                 illusts.push(temp)
                 cnt++
             }
@@ -185,8 +190,8 @@ async function downloadByBookmark(me, isPublic = true) {
 
     utils.clearProgress(processDisplay)
 
-    //下载
-    await downloadIllusts(illusts.reverse(), Path.join(config.path, dir), config.thread)
+    // 下载
+    await downloadIllusts(illusts.reverse(), Path.join(dldir), config.thread)
 }
 
 
@@ -395,12 +400,10 @@ async function getIllustratorNewDir(data) {
 async function downloadByIllusts(illustJSON) {
     console.log()
     let illusts = []
-    for (let json of illustJSON) {
+    for (const json of illustJSON) {
         illusts = illusts.concat(await Illust.getIllusts(json))
     }
     await downloadIllusts(illusts, Path.join(config.path, 'PID'), config.thread)
-        ////防止突破30次/min的限制
-        //await utils.sleep(2000);
 }
 
 
