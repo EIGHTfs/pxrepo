@@ -98,11 +98,14 @@ function callApi(url, options, retry = 2) {
                     console.error('Rate limit ,暂停一小会.'.yellow)
                     await sleep(1000 * 30)
                 } else throw err.response.data
-                return callApi(url, options)
-            } else if (JSON.stringify(err.response.data).search('Rate Limit') != -1) {
-                console.error('Rate limit ,暂停一小会.'.gray)
-                await sleep(1000 * 30)
-            } else { throw err.response.data }
+            } else {
+                if (retry <= 0) throw err.message
+                console.error('RETRY'.yellow, url)
+                console.error(err.message)
+                await sleep(1000)
+                return callApi(url, options, retry - 1)
+            }
+
         })
 }
 
