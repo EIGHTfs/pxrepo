@@ -10,6 +10,9 @@ global.downJson = Path.join(global.configFileDir, 'download.json') //下载任�
 global.blacklistJson = Path.join(global.configFileDir, 'blacklist.json') //黑名单
 global.historyJson = Path.join(global.configFileDir, 'history.json') //历史下载
 global.configFile = Path.join(global.configFileDir, 'config.json')
+global.config
+global.download
+global.agent
 global.bookMark = Path.join(global.configFileDir, 'bookMark.json')
 global.blacklist = require(global.blacklistJson)
 

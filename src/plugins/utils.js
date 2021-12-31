@@ -141,7 +141,7 @@ class UgoiraDir {
     }
 }
 
-function isonline() {
+function isOnline() {
     var isOnline = require('is-online')
     isOnline({
         timeout: 2000,
@@ -149,15 +149,22 @@ function isonline() {
     }).then(online => {
         if (online) {
             //console.log("Network".green);
-            Network = 100
+            return 100
                 //console.log(Network);
         } else {
             //console.log("Network".yellow);
-            Network = 200
+            return 200
                 //console.log(Network);
         }
     })
+
 }
+
+function RemoveIllegalCharacters() {
+
+
+}
+
 module.exports = {
     readDirSync,
     showProgress,
@@ -169,5 +176,7 @@ module.exports = {
     checkExist,
     sleep,
     showExists,
-    deleteExist
+    deleteExist,
+    isOnline,
+
 }
