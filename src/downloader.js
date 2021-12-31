@@ -17,7 +17,6 @@ let dlFileSize
 let config
 let Network = 100
 
-
 let httpsAgent = false
 
 
@@ -112,39 +111,48 @@ async function getDownloadListByIllustrator(illustrator) {
 async function downloadByBookmark(me, isPublic) {
     //得到画师下载目录
     const ugoiraDir = new UgoiraDir(Path.join(config.path, '「Bookmark」'))
-    const illustExists = file => (file.endsWith('.zip') ? ugoiraDir.existsSync(file) : Fse.existsSync(Path.join(dldir, file)))
+    const illustExists = file => (file.endsWith('.zip') ? ugoiraDir.existsSync(file) : Fse.existsSync(Path.join(Path.join(config.path, '「Bookmark」'), file)))
 
-
-
-
-    // 得到未下载的画作
     let illusts = []
-
+    let bookmarks = []
     const processDisplay = utils.showProgress(() => illusts.length)
     if (!Fs.existsSync(global.bookMark)) {
         console.log('\nCollecting illusts of your bookmark')
         do {
 
-            const temps = await me.getIllusts('bookmark', {
+            bookmarks = await me.getIllusts('bookmark', {
                 restrict: isPublic ? 'public' : 'private',
             })
-            for (const temp of temps) {
-                if (!illustExists(temp.file)) {
-                    //console.log(temp)
-                    illusts.push(temp)
+            for (const bookmark of bookmarks) {
+                if (!illustExists(bookmark.file)) {
+                    //console.log(bookmark)
+                    illusts.push(bookmark)
 
                 }
+                await Fs.writeFileSync(global.bookMark, JSON.stringify(illusts))
             }
         } while (me.hasNext('bookmark'))
 
-        await Fs.writeFileSync(global.bookMark, JSON.stringify(illusts))
 
+
+    } else {
+        bookmarks = require(global.bookMark)
+        for (const bookmark of bookmarks) {
+            if (!illustExists(bookmark.file)) {
+                //console.log(bookmark)
+                illusts.push(bookmark)
+
+            }
+            await Fs.writeFileSync(global.bookMark, JSON.stringify(illusts))
+        }
     }
-    utils.clearProgress(processDisplay)
-    illusts = require(global.bookMark)
 
-    // 下载
+
+    utils.clearProgress(processDisplay)
+        // 下载
     await downloadIllusts(illusts.reverse(), Path.join(Path.join(config.path, '「Bookmark」')), config.thread)
+    Fs.unlinkSync(global.bookMark)
+
 }
 
 
@@ -341,9 +349,6 @@ async function downloadByIllusts(illustJSON) {
     }
     await downloadIllusts(illusts, Path.join(config.path, '「PID」'), config.thread)
 }
-
-
-
 
 module.exports = {
     setConfig,

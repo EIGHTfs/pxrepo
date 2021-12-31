@@ -516,7 +516,7 @@ class PixivFunc {
      */
     async downloadByPIDs(pids) {
         const jsons = []
-        const dirPath = Path.join(__config.download.path, 'PID')
+        const dirPath = Path.join(__config.download.path, '「PID」')
         Fse.ensureDirSync(dirPath)
         const exists = Fse.readdirSync(dirPath)
             .map(file => {
