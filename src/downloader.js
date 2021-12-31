@@ -44,7 +44,14 @@ async function downloadByIllustrators(illustrators, callback) {
         }
 
         console.log("\nCollecting illusts of " + (parseInt(i) + 1).toString().green + "/" + illustrators.length + " uid ".gray + illustrator.id.toString().cyan + " " + illustrator.name.yellow)
+        if (!Fs.existsSync(global.blacklistJson)) //如果不存在blacklistJson则创建
+        {
+            global.blacklist = []
+            global.blacklist.push(new Illustrator(11))
+            await Fs.writeFileSync(global.blacklistJson, JSON.stringify(global.blacklist))
 
+        }
+        global.blacklist = require(global.blacklistJson)
         if (utils.checkExist(global.blacklist, parseInt(illustrator.id))) {
             console.log('黑名单：\t (' + parseInt(illustrator.id) + ')')
             continue
