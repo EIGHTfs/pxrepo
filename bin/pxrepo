@@ -71,7 +71,7 @@ program
     .option('')
     .option('-M, --no-ugoira-meta', '将不会为ugoira请求元数据，这有助于节省时间或避免API速率限制错误')
     .option('')
-    .option('-d, --divide [Json]', '清除未完成下载的文件')
+    .option('-d, --divide [Json]', '拆分json文件')
     .option('')
     .option('    --no-cf', '从i.pximg.net下载插图，而不是i-cf.pximg.net')
     .option('')
