@@ -89,6 +89,27 @@ function jsonIndexOf(uid, json) {
     return -1
 }
 
+async function divideJson(jsonFile, size) {
+    let jsonSize = 0
+    let count = 0
+    let item = []
+    let json = require(jsonFile)
+    let i = 0
+    for (i in json) {
+
+        if (jsonSize < size) {
+            item.push(json[i])
+            jsonSize++
+        } else {
+            count++
+            await fs.writeFileSync(`${jsonFile}.${count}.json`, JSON.stringify(item))
+            jsonSize = 0
+        }
+
+    }
+    return i
+}
+
 function checkExist(items, uid, jsonFile) {
     //console.log(jsonIndexOf(uid, items))
     if (jsonIndexOf(uid, items) == -1) {
@@ -185,4 +206,5 @@ module.exports = {
     deleteExist,
     isOnline,
     RemoveIllegalCharacters,
+    divideJson
 }

@@ -71,6 +71,8 @@ program
     .option('')
     .option('-M, --no-ugoira-meta', '将不会为ugoira请求元数据，这有助于节省时间或避免API速率限制错误')
     .option('')
+    .option('-d, --divide [Json]', '清除未完成下载的文件')
+    .option('')
     .option('    --no-cf', '从i.pximg.net下载插图，而不是i-cf.pximg.net')
     .option('')
     .version(pkg.version, '-v, --version')
@@ -151,7 +153,27 @@ handleArgv()
             } else await pixiv.downloadUpdate(global.downJson)
 
         }
+        if (program.divide) {
+            let Json = program.divide
+            console.log(Json)
+            if (typeof Json == 'string') {
+                switch (Json) {
+                    case 'downJson':
+                        await utils.divideJson(global.downJson, 1000)
+                        break
+                    case 'historyJson':
+                        await utils.divideJson(global.historyJson, 1000)
+                        break
+                    case 'blacklistJson':
+                        utils.showExists(global.blacklistJson)
+                        break
+                    default:
+                        if (Fs.existsSync(Json))
+                            await utils.divideJson(Json, 1000)
+                }
+            } else await utils.divideJson(global.downJson, 1000)
 
+        }
         /////////////////////////
         if (program.bookmark) {
             let isPublic = program.bookmark
@@ -182,7 +204,7 @@ handleArgv()
             } else help()
         }
 
-        if (!(program.get || program.update || program.bookmark || program.uid || program.pid))
+        if (!(program.get || program.update || program.bookmark || program.uid || program.pid || program.divide))
             help()
 
         pixiv.clearReloginInterval()
