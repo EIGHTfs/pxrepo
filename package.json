@@ -1,6 +1,6 @@
 {
     "name": "pxrepo",
-    "version": "4.0.2-4",
+    "version": "4.0.2-5",
     "description": "源码来自GitHub上的开源项目：https://github.com/Tsuk1ko/pxder",
     "main": "index.js",
     "dependencies": {
