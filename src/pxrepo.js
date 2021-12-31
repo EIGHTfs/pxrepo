@@ -235,6 +235,14 @@ class PixivFunc {
         async function addToFollows(data) {
             next = data.next_url
             var offset = ''
+            if (!Fs.existsSync(global.blacklistJson)) //如果不存在blacklistJson则创建
+            {
+                global.blacklist = []
+                global.blacklist.push(new Illustrator(11))
+                await Fs.writeFileSync(global.blacklistJson, JSON.stringify(global.blacklist))
+
+            }
+            global.blacklist = require(global.blacklistJson)
             for (const preview of data.user_previews) {
 
                 if (utils.checkExist(global.blacklist, preview.user.id)) {
@@ -324,16 +332,18 @@ class PixivFunc {
      */
     async downloadByUIDs(uids) {
         const uidArray = Array.isArray(uids) ? uids : [uids]
-        for (const uid of uidArray) {
-            //判断作品是否在黑名单
-            if (!Fs.existsSync(global.blacklistJson)) //如果不存在blacklistJson则创建
-            {
-                global.blacklist = []
-                global.blacklist.push(new Illustrator(11))
-                await Fs.writeFileSync(global.blacklistJson, JSON.stringify(global.blacklist))
+        if (!Fs.existsSync(global.blacklistJson)) //如果不存在blacklistJson则创建
+        {
+            global.blacklist = []
+            global.blacklist.push(new Illustrator(11))
+            await Fs.writeFileSync(global.blacklistJson, JSON.stringify(global.blacklist))
 
-            }
-            global.blacklist = require(global.blacklistJson)
+        }
+        global.blacklist = require(global.blacklistJson)
+        for (const uid of uidArray) {
+
+            //判断作品是否在黑名单
+
             if (utils.checkExist(global.blacklist, uid)) {
                 console.log(`黑名单： (${uid})`)
                 continue
@@ -456,12 +466,9 @@ class PixivFunc {
             this.downloadUpdate(Json)
         } else {
             follows = require(Json)
-                //////////////////////////	
             if (!Fs.existsSync(global.historyJson)) //如果不存在historyJson则创建
             {
-
                 Fs.writeFileSync(global.historyJson, JSON.stringify(follows))
-
             }
 
             if (!illustrators) {

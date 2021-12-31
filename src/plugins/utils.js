@@ -1,9 +1,8 @@
 const fs = require('fs')
 const fse = require('fs-extra')
 const Readline = require('readline')
-const Axios = require('axios')
 const Path = require('path')
-
+const Illustrator = require('../illustrator')
 
 function readJsonSafely(path, defaultValue) {
     if (!fse.existsSync(path)) return defaultValue
@@ -115,13 +114,11 @@ function checkExist(items, uid, jsonFile) {
     if (jsonIndexOf(uid, items) == -1) {
         if (jsonFile != null) {
 
-            console.log({
-                id: parseInt(uid),
-            })
+
             items.push({
                 id: parseInt(uid),
+                name: ''
             })
-
 
             fs.writeFileSync(jsonFile, JSON.stringify(items))
         }
