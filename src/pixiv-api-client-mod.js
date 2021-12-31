@@ -75,9 +75,18 @@ function callApi(url, options, retry = 2) {
                     console.error(JSON.stringify(err.response.data).red)
                     let uid = url.substring(url.lastIndexOf("user_id=") + 8, url.length)
                     console.log(uid.red)
+
+                    if (!Fs.existsSync(global.blacklistJson)) //如果不存在blacklistJson则创建
+                    {
+                        global.blacklist = []
+                        global.blacklist.push(new Illustrator(11))
+                        await Fs.writeFileSync(global.blacklistJson, JSON.stringify(global.blacklist))
+
+                    }
+
                     global.blacklist = require(global.blacklistJson)
                     if (!utils.checkExist(global.blacklist, uid, global.blacklistJson)) {
-                        console.log('将 \t (' + uid + ') \t 添加到了黑名单')
+                        console.log(`将   (${uid})  添加到了黑名单`)
                         utils.showExists(global.blacklistJson)
                     }
                     follows = require(global.Json)

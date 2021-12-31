@@ -53,7 +53,7 @@ async function downloadByIllustrators(illustrators, callback) {
         }
         global.blacklist = require(global.blacklistJson)
         if (utils.checkExist(global.blacklist, parseInt(illustrator.id))) {
-            console.log('黑名单：\t (' + parseInt(illustrator.id) + ')')
+            console.log(`黑名单： (${parseInt(illustrator.id)})`)
             continue
         }
         global.historys = require(global.historyJson)

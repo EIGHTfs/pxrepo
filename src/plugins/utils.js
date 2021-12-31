@@ -109,7 +109,7 @@ async function divideJson(jsonFile, size) {
     return i
 }
 
-function checkExist(items, uid, jsonFile) {
+function checkExist(items, uid, jsonFile, uname = '') {
     //console.log(jsonIndexOf(uid, items))
     if (jsonIndexOf(uid, items) == -1) {
         if (jsonFile != null) {
@@ -117,7 +117,7 @@ function checkExist(items, uid, jsonFile) {
 
             items.push({
                 id: parseInt(uid),
-                name: ''
+                name: uname
             })
 
             fs.writeFileSync(jsonFile, JSON.stringify(items))
