@@ -238,20 +238,11 @@ class PixivFunc {
             for (const preview of data.user_previews) {
 
                 if (utils.checkExist(global.blacklist, preview.user.id)) {
-                    console.log('黑名单：\t (' + preview.user.id + ')')
+                    console.log(`黑名单： (${preview.user.id})`)
                     continue
                 } else {
-                    //除去“pixiv事務局”
 
-                    //去除画师名常带的摊位后缀，以及非法字符
-                    let iName = preview.user.name
-                    let nameExtIndex = iName.search(/@|＠/)
-                    if (nameExtIndex >= 1) iName = iName.substring(0, nameExtIndex)
-                    iName = iName.replace(/[\/\\:*?"<>|.&\$]/g, '').replace(/[ ]+$/, '')
-
-
-
-                    dir_Illustrator = Path.join(__config.download.path, '(' + preview.user.id + ')' + iName)
+                    dir_Illustrator = Path.join(__config.download.path, utils.RemoveIllegalCharacters(preview.user.id, preview.user.name))
                     if (utils.checkExist(global.blacklist, preview.user.id))
                         if (!Fs.existsSync(dir_Illustrator))
                             Fs.mkdirSync(dir_Illustrator)
@@ -337,7 +328,7 @@ class PixivFunc {
             //判断作品是否在黑名单
             blacklist = require(global.blacklistJson)
             if (utils.checkExist(global.blacklist, uid)) {
-                console.log('黑名单：\t (' + uid + ')')
+                console.log(`黑名单： (${uid})`)
                 continue
             } else {
                 await Downloader.downloadByIllustrators([new Illustrator(uid)]).catch(e => {

@@ -360,10 +360,10 @@ async function handleArgv() {
 
                 global.blacklist = require(global.blacklistJson)
                 if (!utils.checkExist(global.blacklist, uid, global.blacklistJson)) {
-                    console.log('将 \t (' + uid + ') \t 添加到了黑名单')
+                    console.log(`将   (${uid})  添加到了黑名单`)
                     utils.showExists(global.blacklistJson)
                 } else {
-                    console.log('(' + uid + ')\t' + '存在于黑名单,此次操作为移出黑名单')
+                    console.log(`(${uid}) 存在于黑名单,此次操作为移出黑名单`)
 
                     Fs.writeFileSync(global.blacklistJson, JSON.stringify(utils.deleteExist(uid, global.blacklistJson)))
 

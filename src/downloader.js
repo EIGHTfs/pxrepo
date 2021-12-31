@@ -57,7 +57,7 @@ async function downloadByIllustrators(illustrators, callback) {
 
         utils.checkExist(historys, illustrator.id.toString(), historyJson, illustrator.name)
         let inComplete = Path.join(global.inComplete, illustrator.id.toString())
-        console.log(inComplete)
+            //console.log(inComplete)
 
         //取得下载信息
         let info = await getDownloadListByIllustrator(illustrator)
@@ -315,13 +315,9 @@ async function getIllustratorNewDir(data) {
             }
         })
         //去除画师名常带的摊位后缀，以及非法字符
-    let iName = data.name
-    let nameExtIndex = iName.search(/@|＠/)
-    if (nameExtIndex >= 1) iName = iName.substring(0, nameExtIndex)
-    iName = iName.replace(/[\/\\:*?"<>|.&\$]/g, '').replace(/[ ]+$/, '')
-    let dldirNew = '(' + data.id + ')' + iName
 
-    //决定下载目录
+    let dldirNew = utils.RemoveIllegalCharacters(data.id, data.name)
+        //决定下载目录
     if (!dldir) {
         dldir = dldirNew
     } else if (config.autoRename && dldir != dldirNew) {

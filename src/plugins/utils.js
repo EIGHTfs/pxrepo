@@ -160,7 +160,13 @@ function isOnline() {
 
 }
 
-function RemoveIllegalCharacters() {
+function RemoveIllegalCharacters(id, Name) {
+    //去除画师名常带的摊位后缀，以及非法字符
+
+    let nameExtIndex = Name.search(/@|＠/)
+    if (nameExtIndex >= 1) Name = Name.substring(0, nameExtIndex)
+    Name = Name.replace(/[\/\\:*?"<>|.&\$]/g, '').replace(/[ ]+$/, '')
+    return `(${id})${Name}`
 
 
 }
@@ -178,5 +184,5 @@ module.exports = {
     showExists,
     deleteExist,
     isOnline,
-
+    RemoveIllegalCharacters,
 }
