@@ -98,7 +98,7 @@ class PixivFunc {
     static applyConfig(config = PixivFunc.readConfig()) {
         __config = config
 
-        config.download.tmp = Path.join(configFileDir, 'temp')
+
         Downloader.setConfig(config.download)
         PixivFunc.applyProxyConfig(config)
     }

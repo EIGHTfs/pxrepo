@@ -11,14 +11,10 @@ const download = require('./plugins/download')
 const { UgoiraDir } = utils
 
 const pixivRefer = 'https://www.pixiv.net/'
-let downthread = 0
-let dlFileSize
 
 let config
-let Network = 100
 
 let httpsAgent = false
-
 
 function setConfig(conf) {
     config = conf
@@ -200,9 +196,6 @@ function downloadIllusts(illusts, dldir, configThread) {
                 console.log(`[${threadID + 1}]   \t${(parseInt(i) + 1).toString().green}/${illusts.length}    \t${"pid".gray}  ${illust.id.toString().cyan}   \t${illust.title.yellow}`)
                     //const processDisplay = utils.showProgress(() => `  [${threadID +1}]`);
 
-                //console.log(downthread);
-
-
                 await (async function tryDownload(times) {
 
                     if (times > 3) {
@@ -222,44 +215,33 @@ function downloadIllusts(illusts, dldir, configThread) {
                     //失败重试	
                     //console.log(illust)
                     return download.download(inComplete, illust.file, illust.url, options, errorTimeout).then(async res => {
+                            //文件完整性校验
+                            let fileSize = res.headers['content-length']
+                            let dlfile = Path.join(inComplete, illust.file)
 
-                        //文件完整性校验
-                        let fileSize = res.headers['content-length']
-                        let dlfile = Path.join(inComplete, illust.file)
+                            for (let i = 0; i < 10 && !Fs.existsSync(dlfile); i++) await utils.sleep(200) ////
+                            await utils.sleep(500)
 
+                            if (!fileSize || Fs.statSync(dlfile).size == fileSize) //根据文件大小判断下载是否成功
+                            {
+                                //utils.clearProgress(processDisplay);
+                                Fse.moveSync(dlfile, Path.join(dldir, illust.file)) //从缓存目录到下载目录
+                            } else {
+                                Fs.unlinkSync(dlfile)
+                                throw new Error('Incomplete download')
+                            }
 
-
-                        for (let i = 0; i < 10 && !Fs.existsSync(dlfile); i++) await utils.sleep(200) ////
-
-                        await utils.sleep(500)
-                        dlFileSize = Fs.statSync(dlfile).size
-
-
-
-                        if (!fileSize || dlFileSize == fileSize) //根据文件大小判断下载是否成功
-                        {
-                            //utils.clearProgress(processDisplay);
-
-                            Fse.moveSync(dlfile, Path.join(dldir, illust.file)) //从缓存目录到下载目录
-
-                        } else {
-                            Fs.unlinkSync(dlfile)
-                            throw new Error('Incomplete download')
-                        }
-
-                        if (times != 1) errorThread--
-                    })
-
-
-                    .catch(e => {
-                        if (e && e.response && e.response.status == 404) {
-                            console.log(`[${threadID + 1}]   \t${(parseInt(i) + 1).toString().red}/${illusts.length}    \t${"pid".gray}  ${illust.id.toString().cyan}   \t${illust.title.yellow}`)
-                            return
-                        } else if (times == 1) errorThread++
-                            if (global.p_debug) console.log(e)
-                        console.log(`[${threadID + 1}]   \t${(parseInt(i) + 1).toString().yellow}/${illusts.length}    \t${"pid".gray}  ${illust.id.toString().cyan}   \t${illust.title.yellow}`)
-                        return tryDownload(times + 1)
-                    })
+                            if (times != 1) errorThread--
+                        })
+                        .catch(e => {
+                            if (e && e.response && e.response.status == 404) {
+                                console.log(`[${threadID + 1}]   \t${(parseInt(i) + 1).toString().red}/${illusts.length}    \t${"pid".gray}  ${illust.id.toString().cyan}   \t${illust.title.yellow}`)
+                                return
+                            } else if (times == 1) errorThread++
+                                if (global.p_debug) console.log(e)
+                            console.log(`[${threadID + 1}]   \t${(parseInt(i) + 1).toString().yellow}/${illusts.length}    \t${"pid".gray}  ${illust.id.toString().cyan}   \t${illust.title.yellow}`)
+                            return tryDownload(times + 1)
+                        })
                 })(1)
             }
         })
@@ -268,9 +250,7 @@ function downloadIllusts(illusts, dldir, configThread) {
     let threads = []
 
     //开始多线程
-    for (let t = 0; t < (Math.ceil(illusts.length / Network) + configThread) && t < configThread + 2; t++) //
-    {
-
+    for (let t = 0; t < configThread; t++) {
         threads.push(singleThread(t).catch(e => {
             console.log(e)
         }))

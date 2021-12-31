@@ -141,7 +141,7 @@ class UgoiraDir {
     }
 }
 
-function isOnline() {
+async function isOnline() {
     var isOnline = require('is-online')
     isOnline({
         timeout: 2000,
