@@ -6,7 +6,7 @@ require('colors')
 const Pixiv = require('../src/pxrepo')
 const pixivLogin = require('../src/pixiv-login')
 const PixivApi = require('../src/pixiv-api-client-mod')
-
+const Illustrator = require('../src/illustrator')
 const utils = require('../src/plugins/utils')
 const pkg = require('../package.json')
 const Fse = require('fs-extra')
@@ -41,8 +41,7 @@ global.config
 global.download
 global.agent
 global.bookMark = Path.join(global.configFileDir, 'bookMark.json')
-global.blacklist = require(global.blacklistJson)
-
+global.blacklist = []
 global.pixiv = new PixivApi()
 
 /*
@@ -379,7 +378,13 @@ async function handleArgv() {
             const uidArray = Array.isArray(uids) ? uids : [uids]
             for (const uid of uidArray) {
                 //添加黑名单
+                if (!Fs.existsSync(global.blacklistJson)) //如果不存在blacklistJson则创建
+                {
+                    global.blacklist = []
+                    global.blacklist.push(new Illustrator(11))
+                    await Fs.writeFileSync(global.blacklistJson, JSON.stringify(global.blacklist))
 
+                }
                 global.blacklist = require(global.blacklistJson)
                 if (!utils.checkExist(global.blacklist, uid, global.blacklistJson)) {
                     console.log(`将   (${uid})  添加到了黑名单`)

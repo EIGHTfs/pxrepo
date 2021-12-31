@@ -326,7 +326,14 @@ class PixivFunc {
         const uidArray = Array.isArray(uids) ? uids : [uids]
         for (const uid of uidArray) {
             //判断作品是否在黑名单
-            blacklist = require(global.blacklistJson)
+            if (!Fs.existsSync(global.blacklistJson)) //如果不存在blacklistJson则创建
+            {
+                global.blacklist = []
+                global.blacklist.push(new Illustrator(11))
+                await Fs.writeFileSync(global.blacklistJson, JSON.stringify(global.blacklist))
+
+            }
+            global.blacklist = require(global.blacklistJson)
             if (utils.checkExist(global.blacklist, uid)) {
                 console.log(`黑名单： (${uid})`)
                 continue
@@ -438,12 +445,7 @@ class PixivFunc {
         })
 
 
-        if (!Fs.existsSync(global.blacklistJson)) //如果不存在blacklistJson则创建
-        {
 
-            Fs.writeFileSync(global.blacklistJson, '[{\"id\":' + parseInt(11) + '}]')
-
-        }
         if (!Fs.existsSync(global.downJson)) //如果不存在downJson则创建
         {
             uids.forEach(uid => follows.push({

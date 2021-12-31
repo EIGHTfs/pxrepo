@@ -14,6 +14,6 @@ global.config
 global.download
 global.agent
 global.bookMark = Path.join(global.configFileDir, 'bookMark.json')
-global.blacklist = require(global.blacklistJson)
+global.blacklist = []
 
 global.pixiv = new PixivApi()
