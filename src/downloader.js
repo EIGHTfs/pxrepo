@@ -224,7 +224,7 @@ function downloadIllusts(illusts, dldir, configThread) {
                     }
                     //失败重试	
                     //console.log(illust)
-                    return download.download(inComplete, illust.file, illust.url, options, errorTimeout).then(async res => {
+                    return download.download(inComplete, illust.file, illust.url, options).then(async res => {
                             //文件完整性校验
                             let fileSize = res.headers['content-length']
                             let dlfile = Path.join(inComplete, illust.file)
