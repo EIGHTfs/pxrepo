@@ -1,3 +1,11 @@
+/*
+ * @Author       : EIGHTfs
+ * @Date         : 2022-01-01 21:17:38
+ * @LastEditors  : EIGHTfs
+ * @LastEditTime : 2022-01-01 22:46:32
+ * @Description  : file content
+ * @FilePath     : \pxrepo\src\illust.js
+ */
 /**
  * 插画
  *
@@ -72,5 +80,4 @@ class Illust {
         return illusts
     }
 }
-
 module.exports = Illust
