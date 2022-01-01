@@ -99,7 +99,7 @@ async function getDownloadListByIllustrator(illustrator) {
                 cnt++
             }
         }
-    } while (illustrator.hasNext('illust') && cnt > 0 && illusts.length < 4500) utils.clearProgress(processDisplay)
+    } while (illustrator.hasNext('illust') && cnt > 0) utils.clearProgress(processDisplay)
     return {
         illustratorFolder,
         illusts: illusts.reverse()
