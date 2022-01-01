@@ -126,7 +126,7 @@ async function downloadByBookmark(me, isPublic) {
         console.log('\nCollecting illusts of your bookmark')
         do {
 
-            bookmarks = await me.getIllusts('bookmark', {
+            bookmarks = await me.getIllusts('illust', {
                 restrict: isPublic ? 'public' : 'private',
             })
             for (const bookmark of bookmarks) {
