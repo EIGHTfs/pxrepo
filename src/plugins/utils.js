@@ -91,7 +91,7 @@ function jsonIndexOf(uid, json) {
 async function divideJson(jsonFile, size) {
     let jsonSize = 0
     let count = 0
-    let item = []
+    let item
     let json = require(jsonFile)
     let i = 0
     for (i in json) {
@@ -103,13 +103,14 @@ async function divideJson(jsonFile, size) {
             count++
             await fs.writeFileSync(`${jsonFile}.${count}.json`, JSON.stringify(item))
             jsonSize = 0
+            item = []
         }
 
     }
     return i
 }
 
-function checkExist(items, uid, jsonFile, uname = '') {
+function checkExist(items, uid, jsonFile, remarks = '') {
     //console.log(jsonIndexOf(uid, items))
     if (jsonIndexOf(uid, items) == -1) {
         if (jsonFile != null) {
@@ -117,7 +118,7 @@ function checkExist(items, uid, jsonFile, uname = '') {
 
             items.push({
                 id: parseInt(uid),
-                name: uname
+                remarks: remarks
             })
 
             fs.writeFileSync(jsonFile, JSON.stringify(items))
