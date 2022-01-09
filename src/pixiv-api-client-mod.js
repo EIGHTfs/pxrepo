@@ -69,10 +69,10 @@ function callApi(url, options, retry = 2) {
                 await sleep(1000 * 5)
                 return callApi(url, options)
             } else if (err.response && err.response.data) {
-                err.response.data
-                if (JSON.stringify(err.response.data).search('Your access is currently restricted.') != -1 ||
-                    JSON.stringify(err.response.data).search('Work has been deleted or the ID does not exist.') != -1) {
-                    console.error(JSON.stringify(err.response.data).red)
+                const msg = err.response.data
+                if (JSON.stringify(msg).search('Your access is currently restricted.') != -1 ||
+                    JSON.stringify(msg).search('Work has been deleted or the ID does not exist.') != -1) {
+                    console.error(JSON.stringify(msg).red)
                     let uid = url.substring(url.lastIndexOf("user_id=") + 8, url.length)
                     console.log(uid.red)
 
@@ -85,7 +85,7 @@ function callApi(url, options, retry = 2) {
                     }
 
                     global.blacklist = require(global.blacklistJson)
-                    if (!utils.checkExist(global.blacklist, uid, global.blacklistJson)) {
+                    if (!utils.checkExist(global.blacklist, uid, global.blacklistJson, msg)) {
                         console.log(`将   (${uid})  添加到了黑名单`)
                         utils.showExists(global.blacklistJson)
                     }
