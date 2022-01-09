@@ -85,7 +85,7 @@ function callApi(url, options, retry = 2) {
                     }
 
                     global.blacklist = require(global.blacklistJson)
-                    if (!utils.checkExist(global.blacklist, uid, global.blacklistJson, msg)) {
+                    if (!utils.checkExist(global.blacklist, uid, global.blacklistJson, msg.error.user_message)) {
                         console.log(`将   (${uid})  添加到了黑名单`)
                         utils.showExists(global.blacklistJson)
                     }

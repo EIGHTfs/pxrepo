@@ -233,7 +233,10 @@ class PixivFunc {
             if (!Fs.existsSync(global.blacklistJson)) //如果不存在blacklistJson则创建
             {
                 global.blacklist = []
-                global.blacklist.push(new Illustrator(11))
+                global.blacklist.push({
+                    id: 11,
+                    remarks: 'pixiv'
+                })
                 await Fs.writeFileSync(global.blacklistJson, JSON.stringify(global.blacklist))
             }
             global.blacklist = require(global.blacklistJson)
@@ -319,7 +322,10 @@ class PixivFunc {
         if (!Fs.existsSync(global.blacklistJson)) //如果不存在blacklistJson则创建
         {
             global.blacklist = []
-            global.blacklist.push(new Illustrator(11))
+            global.blacklist.push({
+                id: 11,
+                remarks: 'pixiv'
+            })
             await Fs.writeFileSync(global.blacklistJson, JSON.stringify(global.blacklist))
 
         }
