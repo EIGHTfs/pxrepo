@@ -97,10 +97,10 @@ function callApi(url, options, retry = 2) {
                     await Fs.writeFileSync(global.Json, JSON.stringify(follows))
                     url = null
                     return callApi(url, options)
-                } else if (JSON.stringify(err.response.data).search('Rate Limit') != -1) {
+                } else if (JSON.stringify(msg).search('Rate Limit') != -1) {
                     console.error('Rate limit ,暂停一小会.'.yellow)
-                    await sleep(1000 * 30)
-                } else throw err.response.data
+                    await sleep(1000 * 60)
+                } else throw msg
             } else {
                 if (retry <= 0) throw err.message
                 console.error('RETRY'.yellow, url)
