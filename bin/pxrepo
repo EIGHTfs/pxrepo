@@ -381,7 +381,10 @@ async function handleArgv() {
             if (!Fs.existsSync(global.blacklistJson)) //如果不存在blacklistJson则创建
             {
                 global.blacklist = []
-                global.blacklist.push(new Illustrator(11))
+                global.blacklist.push({
+                    id: 11,
+                    remarks: 'pixiv'
+                })
                 await Fs.writeFileSync(global.blacklistJson, JSON.stringify(global.blacklist))
 
             }
@@ -389,7 +392,7 @@ async function handleArgv() {
             for (const uid of uidArray) {
                 //添加黑名单
 
-                if (!utils.checkExist(global.blacklist, uid, global.blacklistJson)) {
+                if (!utils.checkExist(global.blacklist, uid, global.blacklistJson, '用户操作')) {
                     console.log(`将   (${uid})  添加到了黑名单`)
                     utils.showExists(global.blacklistJson)
                 } else {
