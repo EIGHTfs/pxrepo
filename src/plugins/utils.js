@@ -102,6 +102,7 @@ async function divideJson(jsonFile, size) {
         } else {
             count++
             await fs.writeFileSync(`${jsonFile}.${count}.json`, JSON.stringify(item))
+            await fs.writeFileSync(jsonFile, JSON.stringify('[]'))
             jsonSize = 0
             item = []
         }
@@ -121,7 +122,7 @@ function checkExist(items, uid, jsonFile, remarks = '') {
                 remarks: remarks
             })
 
-            fs.writeFileSync(jsonFile, JSON.stringify(items))
+            await fs.writeFileSync(jsonFile, JSON.stringify(items))
         }
         return false
     } else return true
