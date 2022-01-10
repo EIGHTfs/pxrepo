@@ -2,7 +2,7 @@
  * @Author       : EIGHTfs
  * @Date         : 2022-01-01 21:17:38
  * @LastEditors  : EIGHTfs
- * @LastEditTime : 2022-01-01 22:46:32
+ * @LastEditTime : 2022-01-10 18:22:21
  * @Description  : file content
  * @FilePath     : \pxrepo\src\illust.js
  */
@@ -57,8 +57,7 @@ class Illust {
                     const uDelay = await global.pixiv.ugoiraMetaData(id).then(ret => ret.ugoira_metadata.frames[0].delay)
                     illusts.push(new Illust(...ugoiraParams, `(${id})${fileName}@${uDelay}ms.zip`))
                 } catch (error) {
-                    console.error('\nFailed to get ugoira meta data . If you get a rate limit error, please use ', '--no-ugoira-meta'.yellow, 'argument to avoid it.', error, '\n')
-                    illusts.push(new Illust(...ugoiraParams, `(${id})${fileName}.zip`))
+                    console.error(error)
                 }
             } else illusts.push(new Illust(...ugoiraParams, `(${id})${fileName}.zip`))
         } else {
