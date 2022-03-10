@@ -140,7 +140,7 @@ async function downloadByBookmark(me, isPublic) {
                 }
                 await Fs.writeFileSync(global.bookMark, JSON.stringify(illusts))
             }
-        } while (me.hasNext('bookmark'))
+        } while (me.hasNext('illust'))
 
 
 
