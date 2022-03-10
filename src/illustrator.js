@@ -74,11 +74,13 @@ class Illustrator {
                 else json = await global.pixiv.userBookmarksIllust(this.id)
             }
         }
-
-        // 数据整合
-        for (const illust of json.illusts) {
-            result = result.concat(await Illust.getIllusts(illust))
+        if (typeof(json.illusts) != 'undefined') {
+            // 数据整合
+            for (const illust of json.illusts) {
+                result = result.concat(await Illust.getIllusts(illust))
+            }
         }
+
 
         this.next[type] = json.next_url
 
