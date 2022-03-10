@@ -2,7 +2,7 @@
  * @Author       : EIGHTfs
  * @Date         : 2022-01-01 02:17:21
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2022-03-11 07:38:07
+ * @LastEditTime: 2022-03-11 07:47:16
  * @Description  : file content
  * @FilePath     : \pxrepo\src\illustrator.js
  */
@@ -64,7 +64,6 @@ class Illustrator {
     async getIllusts(type, option = null) {
         let result = []
         let json = {}
-        let illusts = []
             // 请求
         if (this.next[type]) json = await global.pixiv.requestUrl(this.next[type])
         else {
@@ -74,9 +73,8 @@ class Illustrator {
                 else json = await global.pixiv.userBookmarksIllust(this.id)
             }
         }
-        illusts = json.illusts
-            // 数据整合
-        for (const illust of illusts) {
+        // 数据整合
+        for (const illust of json.illusts) {
             result = result.concat(await Illust.getIllusts(illust))
         }
 
