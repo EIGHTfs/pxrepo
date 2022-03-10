@@ -100,6 +100,7 @@ function callApi(url, options, retry = 2) {
                 } else if (JSON.stringify(msg).search('Rate Limit') != -1) {
                     console.error('Rate limit ,暂停一小会.'.yellow)
                     await sleep(1000 * 60)
+                    return callApi(url, options)
                 } else throw msg
             } else {
                 if (retry <= 0) throw err.message
