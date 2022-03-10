@@ -74,7 +74,9 @@ class Illustrator {
                 else json = await global.pixiv.userBookmarksIllust(this.id)
             }
         }
-        if (typeof(json.illusts) != 'undefined') {
+
+
+        if (json.illusts) {
             // 数据整合
             for (const illust of json.illusts) {
                 result = result.concat(await Illust.getIllusts(illust))
