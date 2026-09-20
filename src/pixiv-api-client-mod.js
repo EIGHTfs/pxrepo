@@ -70,8 +70,8 @@ function callApi(url, options, retry = 2) {
                 return callApi(url, options)
             } else if (err.response && err.response.data) {
                 const msg = err.response.data
-                if (JSON.stringify(msg).search('Your access is currently restricted.') != -1 ||
-                    JSON.stringify(msg).search('Work has been deleted or the ID does not exist.') != -1) {
+                console.error(JSON.stringify(msg.error.user_message).red)
+                if (JSON.stringify(msg.error.user_message) != '') {
                     console.error(JSON.stringify(msg).red)
                     let uid = url.substring(url.lastIndexOf("user_id=") + 8, url.length)
                     console.log(uid.red)
